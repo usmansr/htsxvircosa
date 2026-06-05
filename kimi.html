@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTS Axon × Vircosa — Z-Fold Business Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#F8F5F2', 100: '#E8DDD4', 200: '#D4AF8E', 300: '#C49A6C',
+                            400: '#A67C52', 500: '#8B5A2B', 600: '#6B4423', 700: '#4A2C2A',
+                            800: '#2A2118', 900: '#1A1512',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --nav-primary: #8B5A2B;
+            --nav-secondary: #4A2C2A;
+            --nav-accent: #D4AF8E;
+            --nav-light: #F8F5F2;
+            --nav-dark: #2A2118;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--nav-light);
+            color: var(--nav-dark);
+            overflow-x: hidden;
+            cursor: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+        }
+
+        /* ─── Custom Cursor ─── */
+        #cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--nav-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        #cursor-ring {
+            width: 40px; height: 40px;
+            border: 1.5px solid var(--nav-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: all 0.15s ease-out;
+        }
+
+        /* ─── Popup Tip ─── */
+        .popup-tip {
+            position: fixed;
+            background: var(--nav-dark);
+            color: var(--nav-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px) translateX(-50%);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 9998;
+            white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(42, 33, 24, 0.3);
+        }
+        .popup-tip.visible {
+            opacity: 1;
+            transform: translateY(0) translateX(-50%);
+        }
+        .popup-tip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0;
+            border-style: solid;
+            border-color: var(--nav-dark) transparent transparent;
+        }
+
+        /* ─── Pie Menu (Radial) ─── */
+        .pie-menu {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 240px;
+            height: 240px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .pie-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--nav-primary);
+            color: white;
+            border: 2px solid var(--nav-accent);
+            cursor: none;
+            pointer-events: auto;
+            z-index: 101;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(139, 90, 43, 0.4);
+        }
+        .pie-toggle:hover {
+            transform: scale(1.1);
+            background: var(--nav-secondary);
+        }
+        .pie-menu.active .pie-toggle {
+            transform: rotate(45deg) scale(0.9);
+        }
+        .pie-item {
+            position: absolute;
+            bottom: 27px;
+            right: 27px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--nav-dark);
+            font-size: 1.1rem;
+            pointer-events: auto;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            transform: scale(0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .pie-item:hover {
+            background: var(--nav-primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        .pie-menu.active .pie-item:nth-child(1) { transform: translate(0, -110px) scale(1); opacity: 1; }
+        .pie-menu.active .pie-item:nth-child(2) { transform: translate(-110px, 0) scale(1); opacity: 1; }
+        .pie-menu.active .pie-item:nth-child(3) { transform: translate(0, 110px) scale(1); opacity: 1; }
+        .pie-menu.active .pie-item:nth-child(4) { transform: translate(110px, 0) scale(1); opacity: 1; }
+
+        /* ─── Overlay ─── */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 21, 18, 0.92);
+            backdrop-filter: blur(30px);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .overlay-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            max-width: 850px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 3rem;
+            transform: scale(0.8) translateY(30px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .overlay.active .overlay-content {
+            transform: scale(1) translateY(0);
+        }
+        .overlay-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--nav-light);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        .overlay-close:hover {
+            background: var(--nav-primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* ─── Page Navigation (Dots) ─── */
+        .page-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid var(--nav-accent);
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-dot.active {
+            background: var(--nav-primary);
+            border-color: var(--nav-primary);
+            transform: scale(1.3);
+        }
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: var(--nav-dark);
+            opacity: 0;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .nav-dot:hover::after {
+            opacity: 1;
+            right: 28px;
+        }
+
+        /* ─── Brochure Pages & Z-Fold ─── */
+        .page {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 2rem;
+            overflow: hidden;
+        }
+        /* Z-fold 3D perspective */
+        .page:nth-child(odd) {
+            transform: perspective(1000px) rotateY(0.5deg);
+            transform-origin: left center;
+        }
+        .page:nth-child(even) {
+            transform: perspective(1000px) rotateY(-0.5deg);
+            transform-origin: right center;
+            background: #F0EBE6;
+        }
+        /* Fold creases */
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(139,90,43,0.15), transparent);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .page::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--nav-accent), transparent);
+            opacity: 0.4;
+        }
+        .page:last-child::after { display: none; }
+
+        /* ─── Cover Page ─── */
+        .page-cover {
+            background: var(--nav-dark);
+            color: var(--nav-light);
+            align-items: center;
+            text-align: center;
+        }
+        .fold-badge {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(212, 175, 142, 0.15);
+            border: 1px solid var(--nav-accent);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.05em;
+            color: var(--nav-accent);
+        }
+
+        /* ─── Bento Grid ─── */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(160px, auto);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(212, 175, 142, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .bento-card:hover::before { opacity: 1; }
+        .bento-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(42, 33, 24, 0.12);
+            border-color: var(--nav-accent);
+        }
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--nav-primary), var(--nav-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .bento-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--nav-dark);
+        }
+        .bento-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--nav-secondary);
+            opacity: 0.9;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+        .tech-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(139, 90, 43, 0.1);
+            color: var(--nav-primary);
+            border-radius: 100px;
+            border: 1px solid rgba(139, 90, 43, 0.2);
+        }
+
+        /* Bento spans */
+        .bento-card.web-dev { grid-column: span 2; grid-row: span 2; }
+        .bento-card.cloud { grid-column: span 2; grid-row: span 1; }
+        .bento-card.ai { grid-column: span 1; grid-row: span 2; }
+        .bento-card.ecom { grid-column: span 1; grid-row: span 1; }
+        .bento-card.mobile { grid-column: span 1; grid-row: span 1; }
+        .bento-card.about { grid-column: span 2; grid-row: span 1; }
+
+        /* ─── Carousel ─── */
+        .carousel-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .carousel {
+            overflow: hidden;
+            border-radius: 24px;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            gap: 2rem;
+        }
+        .carousel-card {
+            min-width: calc(50% - 1rem);
+            flex-shrink: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: none;
+            color: var(--nav-dark);
+        }
+        .carousel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .carousel-card .card-image {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-card .card-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .carousel-card .card-body {
+            padding: 2rem;
+        }
+        .carousel-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--nav-dark);
+        }
+        .carousel-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--nav-dark);
+            opacity: 0.85;
+            margin-bottom: 1rem;
+        }
+        .carousel-nav {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .carousel-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+            color: var(--nav-dark);
+        }
+        .carousel-btn:hover {
+            background: var(--nav-primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* ─── Widgets ─── */
+        .widget {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .widget-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ─── Animations ─── */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+
+        /* ─── Scroll Indicator ─── */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* ─── Print Styles (Z-Fold Brochure) ─── */
+        @media print {
+            body { cursor: auto; }
+            .pie-menu, .page-nav, .carousel-nav, .overlay, .scroll-hint { display: none !important; }
+            .page {
+                min-height: 100vh;
+                page-break-after: always;
+                transform: none !important;
+            }
+            .page:last-child { page-break-after: auto; }
+            .page::before, .page::after { display: none; }
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .bento-card.web-dev { grid-column: span 2; grid-row: span 2; }
+            .bento-card.cloud { grid-column: span 2; grid-row: span 1; }
+            .bento-card.ai { grid-column: span 1; grid-row: span 2; }
+            .bento-card.ecom { grid-column: span 1; grid-row: span 1; }
+            .bento-card.mobile { grid-column: span 1; grid-row: span 1; }
+            .bento-card.about { grid-column: span 2; grid-row: span 1; }
+            .carousel-card { min-width: calc(100% - 1rem); }
+        }
+        @media (max-width: 640px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card { grid-column: span 1 !important; grid-row: span 1 !important; }
+            .page { padding: 2rem 1rem; }
+            .page-nav { right: 1rem; }
+            .pie-menu { bottom: 1rem; right: 1rem; }
+            .overlay-content { padding: 2rem 1.5rem; }
+            .fold-badge { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- Popup Tip -->
+    <div id="popup-tip" class="popup-tip"></div>
+
+    <!-- Overlay Modal -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-content" id="overlay-content">
+            <button class="overlay-close" onclick="closeOverlay()" data-tip="Close (Esc)">✕</button>
+            <div id="overlay-body"></div>
+        </div>
+    </div>
+
+    <!-- Pie Menu (Radial Navigation) -->
+    <div class="pie-menu" id="pie-menu">
+        <button class="pie-toggle" id="pie-toggle" data-tip="Quick Menu">+</button>
+        <div class="pie-items">
+            <a href="#page-1" class="pie-item" data-tip="Cover" onclick="closePie()">⌂</a>
+            <a href="#page-2" class="pie-item" data-tip="Services" onclick="closePie()">⚡</a>
+            <a href="#page-3" class="pie-item" data-tip="Projects" onclick="closePie()">🚀</a>
+            <a href="#page-4" class="pie-item" data-tip="Contact" onclick="closePie()">✉</a>
+        </div>
+    </div>
+
+    <!-- Page Navigation Dots -->
+    <nav class="page-nav">
+        <a href="#page-1" class="nav-dot active" data-page="1" data-label="Cover" onclick="scrollToPage(1)"></a>
+        <a href="#page-2" class="nav-dot" data-page="2" data-label="Services" onclick="scrollToPage(2)"></a>
+        <a href="#page-3" class="nav-dot" data-page="3" data-label="Projects" onclick="scrollToPage(3)"></a>
+        <a href="#page-4" class="nav-dot" data-page="4" data-label="Contact" onclick="scrollToPage(4)"></a>
+    </nav>
+
+    <main>
+        <!-- ═══════════════════════════════════════
+             PAGE 1 — FRONT COVER
+             ═══════════════════════════════════════ -->
+        <section id="page-1" class="page page-cover">
+            <div class="fold-badge">Z-FOLD DIGITAL BROCHURE — 2026</div>
+
+            <div class="max-w-4xl mx-auto w-full fade-in-up visible">
+                <!-- Status Widget -->
+                <div class="widget mb-8 inline-flex" style="border-color: rgba(212,175,142,0.3); background: rgba(212,175,142,0.1);">
+                    <div class="widget-dot"></div>
+                    <span style="color: var(--nav-accent);">Available for new projects</span>
+                </div>
+
+                <h1 class="font-serif text-6xl md:text-8xl font-bold mb-6 leading-tight" style="color: var(--nav-light);">
+                    HTS Axon <span style="color: var(--nav-accent);">✦</span> Vircosa
+                </h1>
+
+                <p class="text-xl md:text-2xl mb-4 font-light" style="color: var(--nav-accent);">
+                    Business Development Portfolio
+                </p>
+
+                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed opacity-90">
+                    Pakistan-based software and cloud solutions partnership helping startups, businesses, and entrepreneurs launch scalable digital products — from discovery to deployment.
+                </p>
+
+                <!-- Credential Widgets -->
+                <div class="flex flex-wrap justify-center gap-4 mb-16">
+                    <div class="widget" style="background: rgba(212,175,142,0.15); border-color: rgba(212,175,142,0.3); color: var(--nav-light);">
+                        <span style="color: var(--nav-accent);">✓</span> FBR Registered
+                    </div>
+                    <div class="widget" style="background: rgba(212,175,142,0.15); border-color: rgba(212,175,142,0.3); color: var(--nav-light);">
+                        <span style="color: var(--nav-accent);">✓</span> Trademark Registered
+                    </div>
+                    <div class="widget" style="background: rgba(212,175,142,0.15); border-color: rgba(212,175,142,0.3); color: var(--nav-light);">
+                        <span style="color: var(--nav-accent);">10+</span> Years Experience
+                    </div>
+                </div>
+
+                <!-- Contact Bar -->
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8 text-sm font-mono opacity-70">
+                    <a href="https://vircosa.com" target="_blank" class="hover:opacity-100 transition-opacity" style="color: var(--nav-accent);" data-tip="Open Portfolio">
+                        🌐 vircosa.com
+                    </a>
+                    <span style="color: var(--nav-accent);">•</span>
+                    <a href="mailto:support@vircosa.com" class="hover:opacity-100 transition-opacity" style="color: var(--nav-accent);" data-tip="Send Email">
+                        ✉ support@vircosa.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Hint -->
+            <div class="scroll-hint" style="color: var(--nav-accent); opacity: 0.6;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+
+            <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             PAGE 2 — CORE SERVICES (BENTO GRID)
+             ═══════════════════════════════════════ -->
+        <section id="page-2" class="page" style="background: var(--nav-light);">
+            <div class="max-w-6xl mx-auto w-full">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 class="font-serif text-5xl md:text-6xl font-bold mb-4" style="color: var(--nav-dark);">Core Services</h2>
+                    <p class="text-lg opacity-70 max-w-2xl mx-auto">From concept to deployment, we deliver full-stack solutions with modern technologies and transparent, deadline-driven delivery.</p>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Full-Stack Web Dev (Large) -->
+                    <div class="bento-card web-dev fade-in-up delay-100" data-tip="Full-Stack Web Development">
+                        <div class="card-icon">⚡</div>
+                        <h3>Full-Stack Web Development</h3>
+                        <p>Modern, scalable applications built with React, Node.js, Laravel, and Django. Production-ready REST API design, database architecture, and server-side rendering.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Laravel</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">React.js</span>
+                            <span class="tech-tag">Next.js</span>
+                            <span class="tech-tag">Django</span>
+                            <span class="tech-tag">REST API</span>
+                        </div>
+                    </div>
+
+                    <!-- Cloud & DevOps (Wide) -->
+                    <div class="bento-card cloud fade-in-up delay-200" data-tip="Cloud Infrastructure & DevOps">
+                        <div class="card-icon">☁</div>
+                        <h3>Cloud & DevOps</h3>
+                        <p>AWS EC2/Lightsail infrastructure, Docker containers, Jenkins CI/CD, and automated deployment pipelines for zero-downtime releases.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">AWS</span>
+                            <span class="tech-tag">Docker</span>
+                            <span class="tech-tag">Jenkins</span>
+                            <span class="tech-tag">CI/CD</span>
+                            <span class="tech-tag">Nginx</span>
+                        </div>
+                    </div>
+
+                    <!-- AI & Automation (Tall) -->
+                    <div class="bento-card ai fade-in-up delay-300" data-tip="AI & Workflow Automation">
+                        <div class="card-icon">🤖</div>
+                        <h3>AI & Automation</h3>
+                        <p>LLM-powered chatbots, Selenium browser automation, and n8n workflow orchestration to streamline business operations.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">LLM</span>
+                            <span class="tech-tag">Selenium</span>
+                            <span class="tech-tag">n8n</span>
+                            <span class="tech-tag">Python</span>
+                        </div>
+                    </div>
+
+                    <!-- E-Commerce (Small) -->
+                    <div class="bento-card ecom fade-in-up delay-100" data-tip="E-Commerce Solutions">
+                        <div class="card-icon">🛒</div>
+                        <h3>E-Commerce</h3>
+                        <p>Shopify & WooCommerce development with custom payment gateway integrations.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Shopify</span>
+                            <span class="tech-tag">WooCommerce</span>
+                            <span class="tech-tag">Stripe</span>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Apps (Small) -->
+                    <div class="bento-card mobile fade-in-up delay-200" data-tip="Cross-Platform Mobile">
+                        <div class="card-icon">📱</div>
+                        <h3>Mobile Apps</h3>
+                        <p>Native-feel cross-platform apps for iOS & Android using Flutter and React Native.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Flutter</span>
+                            <span class="tech-tag">React Native</span>
+                            <span class="tech-tag">iOS</span>
+                            <span class="tech-tag">Android</span>
+                        </div>
+                    </div>
+
+                    <!-- About / Partnership (Wide) -->
+                    <div class="bento-card about fade-in-up delay-300" data-tip="About Our Partnership">
+                        <div class="flex gap-4 mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-serif text-lg font-bold mb-1" style="color: var(--nav-primary);">HTS Axon</h4>
+                                <p class="text-xs opacity-80 leading-relaxed">Software House — FBR Registered. 10+ years backend engineering expertise. Full-stack dev team: PHP, Python, JS, Mobile.</p>
+                            </div>
+                            <div class="w-px bg-brand-200"></div>
+                            <div class="flex-1">
+                                <h4 class="font-serif text-lg font-bold mb-1" style="color: var(--nav-primary);">Vircosa</h4>
+                                <p class="text-xs opacity-80 leading-relaxed">Business Dev & DevOps — Trademark Registered. Client acquisition, cloud infrastructure, and direct point of contact.</p>
+                            </div>
+                        </div>
+                        <p class="text-sm opacity-90 mt-auto">A single, reliable partnership from discovery to deployment. Transparent communication and deadline-driven delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             PAGE 3 — PROJECTS (CAROUSEL + OVERLAY)
+             ═══════════════════════════════════════ -->
+        <section id="page-3" class="page" style="background: var(--nav-dark); color: var(--nav-light);">
+            <div class="max-w-6xl mx-auto w-full">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 class="font-serif text-5xl md:text-6xl font-bold mb-4" style="color: var(--nav-light);">Projects Portfolio</h2>
+                    <p class="text-lg opacity-70 max-w-2xl mx-auto">Live deployments and production-ready solutions for startups and enterprises.</p>
+
+                    <!-- Stat Widgets -->
+                    <div class="flex justify-center gap-4 mt-8 flex-wrap">
+                        <div class="widget" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;">
+                            <span class="font-mono text-2xl font-bold" style="color: var(--nav-accent);">4+</span>
+                            <span class="text-sm opacity-80">Live Projects</span>
+                        </div>
+                        <div class="widget" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;">
+                            <span class="font-mono text-2xl font-bold" style="color: var(--nav-accent);">10+</span>
+                            <span class="text-sm opacity-80">Years Exp.</span>
+                        </div>
+                        <div class="widget" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;">
+                            <span class="font-mono text-2xl font-bold" style="color: var(--nav-accent);">24/7</span>
+                            <span class="text-sm opacity-80">DevOps Support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-container fade-in-up delay-200">
+                    <div class="carousel">
+                        <div class="carousel-track" id="carousel-track">
+                            <!-- Project 1 -->
+                            <div class="carousel-card" onclick="openOverlay('project1')" data-tip="Click to view details">
+                                <div class="card-image" style="background: linear-gradient(135deg, #4A2C2A, #6B4423);">
+                                    <div class="absolute bottom-4 left-4 flex gap-2">
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">Node.js</span>
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">MongoDB</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3>Vircosa Web Application</h3>
+                                    <p>Full-stack startup web app deployed on Oracle Cloud VM with SSL, custom DNS, and SMTP integration. React.js frontend migration in progress.</p>
+                                    <div class="flex gap-3 mt-4 opacity-60 font-mono text-xs">
+                                        <span>▸ Express.js</span>
+                                        <span>▸ EJS</span>
+                                        <span>▸ Oracle Cloud</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Project 2 -->
+                            <div class="carousel-card" onclick="openOverlay('project2')" data-tip="Click to view details">
+                                <div class="card-image" style="background: linear-gradient(135deg, #2A2118, #4A2C2A);">
+                                    <div class="absolute bottom-4 left-4 flex gap-2">
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">React</span>
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">FastAPI</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3>FairGig Platform</h3>
+                                    <p>Gig worker platform for earnings tracking, commission analysis, and proof-of-income generation. Role-based access for workers, verifiers, and advocates.</p>
+                                    <div class="flex gap-3 mt-4 opacity-60 font-mono text-xs">
+                                        <span>▸ React</span>
+                                        <span>▸ FastAPI</span>
+                                        <span>▸ MongoDB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Project 3 -->
+                            <div class="carousel-card" onclick="openOverlay('project3')" data-tip="Click to view details">
+                                <div class="card-image" style="background: linear-gradient(135deg, #6B4423, #8B5A2B);">
+                                    <div class="absolute bottom-4 left-4 flex gap-2">
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">AWS</span>
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">DevOps</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3>AWS Cloud Native CI/CD</h3>
+                                    <p>Replaced Jenkins + Tomcat with AWS CodeBuild, CodeDeploy, and CodePipeline. Fully automated zero-downtime deployments on every Git push.</p>
+                                    <div class="flex gap-3 mt-4 opacity-60 font-mono text-xs">
+                                        <span>▸ CodeBuild</span>
+                                        <span>▸ CodeDeploy</span>
+                                        <span>▸ CodePipeline</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Project 4 -->
+                            <div class="carousel-card" onclick="openOverlay('project4')" data-tip="Click to view details">
+                                <div class="card-image" style="background: linear-gradient(135deg, #8B5A2B, #A67C52);">
+                                    <div class="absolute bottom-4 left-4 flex gap-2">
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">Docker</span>
+                                        <span class="tech-tag" style="background: rgba(255,255,255,0.2); color: white; border: none;">Jenkins</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3>Dockerized Jenkins Pipeline</h3>
+                                    <p>End-to-end CI/CD with Dockerized Jenkins and Tomcat. JUnit + JaCoCo testing, Maven builds, WAR generation, and remote deployment.</p>
+                                    <div class="flex gap-3 mt-4 opacity-60 font-mono text-xs">
+                                        <span>▸ Docker Compose</span>
+                                        <span>▸ JUnit</span>
+                                        <span>▸ Tomcat</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-nav">
+                        <button class="carousel-btn" onclick="moveCarousel(-1)" data-tip="Previous Project">←</button>
+                        <button class="carousel-btn" onclick="moveCarousel(1)" data-tip="Next Project">→</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             PAGE 4 — BACK COVER / CONTACT
+             ═══════════════════════════════════════ -->
+        <section id="page-4" class="page" style="background: var(--nav-light);">
+            <div class="max-w-4xl mx-auto w-full text-center">
+                <div class="fade-in-up">
+                    <h2 class="font-serif text-5xl md:text-7xl font-bold mb-6" style="color: var(--nav-dark);">
+                        Ready to build<br>
+                        <span style="color: var(--nav-primary);">something great?</span>
+                    </h2>
+
+                    <p class="text-xl mb-12 opacity-80 max-w-2xl mx-auto">
+                        Let's discuss your next project. We are available via Upwork, Fiverr, LinkedIn, or direct email — your single point of contact from discovery to deployment.
+                    </p>
+
+                    <!-- Primary CTAs -->
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-12">
+                        <a href="https://vircosa.com" target="_blank" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-lg font-medium transition-all hover:shadow-xl" style="background: var(--nav-primary); color: white;" data-tip="Visit Portfolio Website">
+                            <span>🌐 Portfolio</span>
+                            <span class="font-mono text-sm opacity-70">vircosa.com</span>
+                        </a>
+
+                        <a href="mailto:support@vircosa.com" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-lg font-medium transition-all border-2 hover:shadow-xl" style="border-color: var(--nav-primary); color: var(--nav-primary);" data-tip="Email Us Directly"
+                           onmouseenter="this.style.background='var(--nav-primary)'; this.style.color='white';"
+                           onmouseleave="this.style.background='transparent'; this.style.color='var(--nav-primary)';">
+                            <span>✉ Email Us</span>
+                            <span class="font-mono text-sm opacity-70">support@vircosa.com</span>
+                        </a>
+                    </div>
+
+                    <!-- Social Widgets -->
+                    <div class="flex justify-center gap-4 mb-16 flex-wrap">
+                        <div class="widget cursor-pointer hover:border-brand-500 transition-colors" data-tip="Upwork">
+                            <span>💼</span> Upwork
+                        </div>
+                        <div class="widget cursor-pointer hover:border-brand-500 transition-colors" data-tip="Fiverr">
+                            <span>🎨</span> Fiverr
+                        </div>
+                        <div class="widget cursor-pointer hover:border-brand-500 transition-colors" data-tip="LinkedIn">
+                            <span>💬</span> LinkedIn
+                        </div>
+                        <div class="widget cursor-pointer hover:border-brand-500 transition-colors" data-tip="GitHub">
+                            <span>⚡</span> GitHub
+                        </div>
+                    </div>
+
+                    <!-- QR Code Widget -->
+                    <div class="relative inline-block p-8 rounded-3xl" style="background: linear-gradient(135deg, var(--nav-light), #F0EBE6); border: 1px solid var(--glass-border);">
+                        <div class="font-mono text-xs mb-2 opacity-60">SCAN TO VISIT PORTFOLIO</div>
+                        <div class="w-32 h-32 mx-auto mb-2 rounded-xl flex items-center justify-center text-4xl bg-white" style="border: 2px solid var(--nav-accent);">
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="var(--nav-primary)" stroke-width="2">
+                                <rect x="4" y="4" width="24" height="24" rx="2"/>
+                                <rect x="36" y="4" width="24" height="24" rx="2"/>
+                                <rect x="4" y="36" width="24" height="24" rx="2"/>
+                                <path d="M36 36h8v8h-8zM48 36h8v8h-8zM36 48h8v8h-8zM52 52h4v4h-4z"/>
+                            </svg>
+                        </div>
+                        <div class="font-mono text-sm font-bold" style="color: var(--nav-primary);">vircosa.com</div>
+                    </div>
+                </div>
+
+                <footer class="mt-20 pt-8 border-t" style="border-color: rgba(139,90,43,0.2);">
+                    <p class="font-mono text-sm opacity-60">
+                        HTS Axon × Vircosa — Pakistan-based Software & Cloud Solutions
+                    </p>
+                    <p class="font-mono text-xs opacity-40 mt-2">
+                        © 2026 All rights reserved. FBR Registered & Trademark Protected.
+                    </p>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /* ─── Custom Cursor ─── */
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = ringX + 'px';
+            ring.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        // Hover effects
+        document.querySelectorAll('a, button, .carousel-card, .bento-card, .widget').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                ring.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                ring.style.borderColor = 'var(--nav-accent)';
+                dot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                ring.style.transform = 'translate(-50%, -50%) scale(1)';
+                ring.style.borderColor = 'var(--nav-primary)';
+                dot.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+        });
+
+        /* ─── Popup Tip System ─── */
+        const tip = document.getElementById('popup-tip');
+        document.querySelectorAll('[data-tip]').forEach(el => {
+            el.addEventListener('mouseenter', (e) => {
+                tip.textContent = el.getAttribute('data-tip');
+                tip.classList.add('visible');
+                updateTipPosition(e);
+            });
+            el.addEventListener('mousemove', updateTipPosition);
+            el.addEventListener('mouseleave', () => {
+                tip.classList.remove('visible');
+            });
+        });
+
+        function updateTipPosition(e) {
+            tip.style.left = e.clientX + 'px';
+            tip.style.top = (e.clientY - 50) + 'px';
+        }
+
+        /* ─── Pie Menu ─── */
+        const pieMenu = document.getElementById('pie-menu');
+        const pieToggle = document.getElementById('pie-toggle');
+        pieToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pieMenu.classList.toggle('active');
+        });
+        function closePie() {
+            pieMenu.classList.remove('active');
+        }
+        document.addEventListener('click', (e) => {
+            if (!pieMenu.contains(e.target)) closePie();
+        });
+
+        /* ─── Overlay / Modal ─── */
+        const overlay = document.getElementById('overlay');
+        const overlayBody = document.getElementById('overlay-body');
+
+        const projectData = {
+            project1: {
+                title: 'Vircosa Web Application',
+                subtitle: 'Full-Stack + DevOps',
+                content: `
+                    <div class="space-y-4">
+                        <p class="text-lg leading-relaxed">Startup web application for the Vircosa brand. Full-stack app deployed on Oracle Cloud VM with SSL certificate, custom DNS, and SMTP integration for branded emails. React.js frontend migration currently in progress.</p>
+                        <div class="grid grid-cols-2 gap-4 my-6">
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">PLATFORM</div>
+                                <div class="font-bold text-brand-800">Oracle Cloud VM</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">STATUS</div>
+                                <div class="font-bold text-brand-800">Live & Migrating</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 my-4">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">Express.js</span>
+                            <span class="tech-tag">EJS</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Oracle Cloud</span>
+                            <span class="tech-tag">SSL</span>
+                            <span class="tech-tag">SMTP</span>
+                            <span class="tech-tag">React.js</span>
+                        </div>
+                        <div class="flex gap-4 mt-6 pt-6 border-t border-brand-200">
+                            <a href="https://github.com/usmansr/vircosa.git" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-800 text-white text-sm font-medium hover:bg-brand-700 transition">View on GitHub</a>
+                            <a href="https://vircosa.com" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-brand-800 text-brand-800 text-sm font-medium hover:bg-brand-800 hover:text-white transition">Live Demo</a>
+                        </div>
+                    </div>
+                `
+            },
+            project2: {
+                title: 'FairGig — Gig Worker Platform',
+                subtitle: 'Full-Stack Developer',
+                content: `
+                    <div class="space-y-4">
+                        <p class="text-lg leading-relaxed">A full-stack platform helping gig workers track earnings, detect unfair commission patterns, and generate proof of income. Features role-based access for workers, verifiers, and advocates.</p>
+                        <div class="grid grid-cols-2 gap-4 my-6">
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">ARCHITECTURE</div>
+                                <div class="font-bold text-brand-800">Microservices</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">AUTH MODEL</div>
+                                <div class="font-bold text-brand-800">Role-Based</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 my-4">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Oracle Cloud</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                        <div class="flex gap-4 mt-6 pt-6 border-t border-brand-200">
+                            <a href="https://github.com/Saad33-hash/FairGig.git" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-800 text-white text-sm font-medium hover:bg-brand-700 transition">View on GitHub</a>
+                        </div>
+                    </div>
+                `
+            },
+            project3: {
+                title: 'AWS Cloud Native CI/CD Pipeline',
+                subtitle: 'DevOps & Cloud Engineer',
+                content: `
+                    <div class="space-y-4">
+                        <p class="text-lg leading-relaxed">Replaced traditional Jenkins + Tomcat setup with AWS-native tooling. Fully automated build, test, and deployment pipeline using AWS CodeBuild, CodeDeploy, and CodePipeline.</p>
+                        <div class="grid grid-cols-2 gap-4 my-6">
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">DEPLOYMENT</div>
+                                <div class="font-bold text-brand-800">Zero-Downtime</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">TRIGGER</div>
+                                <div class="font-bold text-brand-800">Git Push</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 my-4">
+                            <span class="tech-tag">AWS CodeBuild</span>
+                            <span class="tech-tag">AWS CodeDeploy</span>
+                            <span class="tech-tag">AWS CodePipeline</span>
+                            <span class="tech-tag">S3</span>
+                            <span class="tech-tag">EC2</span>
+                        </div>
+                        <div class="flex gap-4 mt-6 pt-6 border-t border-brand-200">
+                            <a href="https://drive.google.com/drive/folders/1KuU5tu4Xl3GTM9ft7hP9PG529zUfdfAu?usp=sharing" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-800 text-white text-sm font-medium hover:bg-brand-700 transition">View Documentation</a>
+                        </div>
+                    </div>
+                `
+            },
+            project4: {
+                title: 'Dockerized Jenkins + Tomcat Pipeline',
+                subtitle: 'DevOps & Cloud Engineer',
+                content: `
+                    <div class="space-y-4">
+                        <p class="text-lg leading-relaxed">End-to-end CI/CD pipeline using Dockerized Jenkins and Tomcat. Automated testing with JUnit and JaCoCo, Maven build, WAR file generation, and remote deployment — all triggered on GitHub push.</p>
+                        <div class="grid grid-cols-2 gap-4 my-6">
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">COVERAGE</div>
+                                <div class="font-bold text-brand-800">JaCoCo + JUnit</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-brand-50 border border-brand-200">
+                                <div class="font-mono text-xs text-brand-500 mb-1">BUILD</div>
+                                <div class="font-bold text-brand-800">Maven WAR</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 my-4">
+                            <span class="tech-tag">Docker</span>
+                            <span class="tech-tag">Docker Compose</span>
+                            <span class="tech-tag">JUnit</span>
+                            <span class="tech-tag">JaCoCo</span>
+                            <span class="tech-tag">Maven</span>
+                            <span class="tech-tag">Tomcat</span>
+                            <span class="tech-tag">GitHub Webhooks</span>
+                        </div>
+                        <div class="flex gap-4 mt-6 pt-6 border-t border-brand-200">
+                            <a href="https://drive.google.com/drive/folders/1GqEOuI3HNT9IvpZs-VADNjjiapIsPOm4?usp=drive_link" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-800 text-white text-sm font-medium hover:bg-brand-700 transition">View Documentation</a>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openOverlay(projectId) {
+            const data = projectData[projectId];
+            if (!data) return;
+            overlayBody.innerHTML = `
+                <h2 class="font-serif text-3xl font-bold mb-2" style="color: var(--nav-dark);">${data.title}</h2>
+                <p class="text-sm font-mono mb-6 opacity-70" style="color: var(--nav-primary);">${data.subtitle}</p>
+                ${data.content}
+            `;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOverlay() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeOverlay();
+        });
+
+        /* ─── Carousel Logic ─── */
+        let carouselIndex = 0;
+        const track = document.getElementById('carousel-track');
+        const cards = track.querySelectorAll('.carousel-card');
+
+        function moveCarousel(direction) {
+            const visibleCount = window.innerWidth < 1024 ? 1 : 2;
+            carouselIndex += direction;
+            if (carouselIndex < 0) carouselIndex = 0;
+            if (carouselIndex > cards.length - visibleCount) carouselIndex = cards.length - visibleCount;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const cardWidth = cards[0].offsetWidth + 32;
+            track.style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+        }
+
+        window.addEventListener('resize', () => {
+            carouselIndex = 0;
+            updateCarousel();
+        });
+
+        /* ─── Intersection Observer (Scroll Animations) ─── */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+        /* ─── Page Navigation ─── */
+        function scrollToPage(pageNum) {
+            const page = document.getElementById(`page-${pageNum}`);
+            if (page) {
+                page.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const pages = document.querySelectorAll('.page');
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        window.addEventListener('scroll', () => {
+            let current = 1;
+            pages.forEach((page, index) => {
+                const rect = page.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2) {
+                    current = index + 1;
+                }
+            });
+
+            navDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (parseInt(dot.getAttribute('data-page')) === current) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        /* ─── Keyboard Shortcuts ─── */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeOverlay();
+                closePie();
+            }
+        });
+    </script>
+</body>
+</html>

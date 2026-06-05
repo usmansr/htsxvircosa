@@ -37,6 +37,11 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+app.get('/bakerdays', (req, res) => {
+    res.render('bakerdays');
+});
+
+
 app.get('/contact-us', (req, res) => {
     res.render('contact-us');
 });

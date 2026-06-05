@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakerdays | Personalised Cakes, Cupcakes & Brownies</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        baker: {
+                            50: '#fffaf5',
+                            100: '#f4f1ee',
+                            200: '#ebf6f1',
+                            300: '#d4edda',
+                            400: '#a8d5ba',
+                            500: '#2d6a4f',
+                            600: '#1b4332',
+                            700: '#f4a261',
+                            800: '#e76f51',
+                            900: '#f8ad9d'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #2d6a4f; border-radius: 4px; }
+        
+        /* Tooltip System */
+        [data-tip] { position: relative; cursor: pointer; }
+        [data-tip]::before {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1b4332;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+        [data-tip]::after {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            border: 4px solid transparent;
+            border-top-color: #1b4332;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        [data-tip]:hover::before, [data-tip]:hover::after { opacity: 1; transform: translateX(-50%) scale(1); }
+        
+        /* Pie Menu */
+        .pie-wrapper { position: relative; width: 60px; height: 60px; }
+        .pie-trigger {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: #2d6a4f;
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(45,106,79,0.4);
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 10;
+            position: relative;
+        }
+        .pie-trigger:hover { transform: scale(1.1); }
+        .pie-wrapper.active .pie-trigger { transform: rotate(45deg); }
+        .pie-item {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 48px; height: 48px;
+            margin: -24px 0 0 -24px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center;
+            color: #2d6a4f;
+            font-size: 18px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            transform: translate(0,0) scale(0.5);
+            pointer-events: none;
+            cursor: pointer;
+            z-index: 5;
+        }
+        .pie-item:hover { background: #ebf6f1; transform: scale(1.15) !important; }
+        .pie-wrapper.active .pie-item { opacity: 1; pointer-events: auto; }
+        .pie-wrapper.active .pie-item:nth-child(1) { transform: translate(0, -80px) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(2) { transform: translate(56px, -56px) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(3) { transform: translate(80px, 0) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(4) { transform: translate(56px, 56px) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(5) { transform: translate(0, 80px) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(6) { transform: translate(-56px, 56px) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(7) { transform: translate(-80px, 0) scale(1); }
+        .pie-wrapper.active .pie-item:nth-child(8) { transform: translate(-56px, -56px) scale(1); }
+        
+        /* Chat Widget */
+        .chat-window {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom right;
+        }
+        .chat-window.closed {
+            transform: scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .chat-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            animation: popIn 0.3s ease;
+        }
+        .chat-bubble.user {
+            background: #2d6a4f;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bubble.bot {
+            background: #f3f4f6;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Bento Grid Overlays */
+        .bento-card { position: relative; overflow: hidden; border-radius: 1rem; }
+        .bento-card img {
+            transition: transform 0.6s ease;
+        }
+        .bento-card:hover img {
+            transform: scale(1.08);
+        }
+        .bento-card .bento-overlay {
+            background: linear-gradient(to top, rgba(27,67,50,0.85) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .bento-card:hover .bento-overlay { opacity: 1; }
+        
+        /* Carousel */
+        .carousel-track {
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        .carousel-card {
+            scroll-snap-align: start;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .carousel-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Product Overlay Modal */
+        .modal-backdrop {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+        }
+        
+        /* 3D Canvas Container */
+        #cake-studio canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            outline: none;
+        }
+        
+        /* Floating badges */
+        .float-badge {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Navbar glass */
+        .nav-glass {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        /* Loader for 3D */
+        .loader-3d {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d6a4f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-baker-50 text-gray-800 font-sans antialiased selection:bg-baker-400 selection:text-baker-600">
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="nav-glass fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-baker-500 rounded-full flex items-center justify-center text-white text-xl">
+                        <i class="fa-solid fa-cake-candles"></i>
+                    </div>
+                    <span class="font-display text-2xl font-bold text-baker-600 tracking-tight">bakerdays</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-baker-500 transition-colors" data-tip="Explore our range">Birthday Cakes</a>
+                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-baker-500 transition-colors" data-tip="Seasonal & more">Occasions</a>
+                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-baker-500 transition-colors">Cupcakes</a>
+                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-baker-500 transition-colors">Brownies</a>
+                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-baker-500 transition-colors">Photo Upload</a>
+                </div>
+
+                <!-- Icons -->
+                <div class="flex items-center gap-4">
+                    <button class="p-2 hover:bg-baker-200 rounded-full transition-colors" data-tip="Search products">
+                        <i class="fa-solid fa-magnifying-glass text-gray-700"></i>
+                    </button>
+                    <button class="p-2 hover:bg-baker-200 rounded-full transition-colors relative" data-tip="Your cart">
+                        <i class="fa-solid fa-cart-shopping text-gray-700"></i>
+                        <span class="absolute top-0 right-0 w-4 h-4 bg-baker-800 text-white text-[10px] rounded-full flex items-center justify-center font-bold">2</span>
+                    </button>
+                    <button class="p-2 hover:bg-baker-200 rounded-full transition-colors md:hidden" onclick="toggleMobileMenu()">
+                        <i class="fa-solid fa-bars text-gray-700 text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-baker-200 hover:text-baker-600">Birthday Cakes</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-baker-200 hover:text-baker-600">Occasions</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-baker-200 hover:text-baker-600">Cupcakes</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-baker-200 hover:text-baker-600">Brownies</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-baker-200 hover:text-baker-600">Photo Upload</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="relative pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-baker-200 via-baker-50 to-white -z-10"></div>
+        
+        <!-- Decorative blobs -->
+        <div class="absolute top-20 right-10 w-72 h-72 bg-baker-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-10 left-10 w-96 h-96 bg-baker-700 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Text -->
+                <div class="space-y-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-baker-300 text-sm font-medium text-baker-600">
+                        <span class="w-2 h-2 bg-baker-500 rounded-full animate-pulse"></span>
+                        Order by 2pm for next day delivery
+                    </div>
+                    
+                    <h1 class="font-display text-5xl lg:text-7xl font-bold text-baker-600 leading-tight">
+                        Personalised <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-baker-500 to-baker-700">Cakes & Gifts</span>
+                    </h1>
+                    
+                    <p class="text-lg text-gray-600 max-w-lg leading-relaxed">
+                        Create your very own customised cakes, bespoke brownies, and custom cupcakes. 
+                        Handcrafted in Nottingham and delivered across the UK.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="document.getElementById('cake-studio').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 bg-baker-500 text-white rounded-full font-semibold shadow-lg shadow-baker-500/30 hover:bg-baker-600 hover:shadow-xl hover:-translate-y-1 transition-all">
+                            Design in 3D <i class="fa-solid fa-cube ml-2"></i>
+                        </button>
+                        <button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 bg-white text-baker-600 border-2 border-baker-500 rounded-full font-semibold hover:bg-baker-50 transition-all">
+                            Shop Collection
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-6 pt-4">
+                        <div class="flex -space-x-3">
+                            <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/3/3330_1543834787_1576preview-web_qxepflpzvuo36tty.jpg" class="w-10 h-10 rounded-full border-2 border-white object-cover" alt="">
+                            <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/d/3d_127_18.jpg" class="w-10 h-10 rounded-full border-2 border-white object-cover" alt="">
+                            <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/d/3d-web_6.jpg" class="w-10 h-10 rounded-full border-2 border-white object-cover" alt="">
+                        </div>
+                        <div class="text-sm">
+                            <div class="flex text-yellow-400 text-xs mb-1">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="text-gray-600 font-medium">25,000+ happy customers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D Preview (Mini) -->
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-baker-500 to-baker-700 rounded-[2rem] opacity-20 blur-2xl"></div>
+                    <div id="hero-canvas" class="relative w-full h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-white">
+                        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" id="hero-loader">
+                            <div class="loader-3d"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-gray-100 float-badge z-20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-baker-200 rounded-full flex items-center justify-center text-baker-600 text-xl">
+                                <i class="fa-solid fa-truck-fast"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Delivery</p>
+                                <p class="font-bold text-baker-600">Next Day UK</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 3D CAKE STUDIO ==================== -->
+    <section id="cake-studio" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold text-baker-600 mb-4">3D Cake Studio</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Rotate, zoom and customise your cake in real-time. Choose your sponge, icing and decorations before ordering.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Controls -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-baker-50 p-6 rounded-2xl border border-baker-200">
+                        <h3 class="font-semibold text-baker-600 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-palette"></i> Sponge Colour
+                        </h3>
+                        <div class="flex gap-3 flex-wrap">
+                            <button onclick="changeSponge('#f5deb3')" class="w-10 h-10 rounded-full bg-[#f5deb3] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Classic Vanilla"></button>
+                            <button onclick="changeSponge('#8B4513')" class="w-10 h-10 rounded-full bg-[#8B4513] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Rich Chocolate"></button>
+                            <button onclick="changeSponge('#FFFACD')" class="w-10 h-10 rounded-full bg-[#FFFACD] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Lemon Drizzle"></button>
+                            <button onclick="changeSponge('#DC143C')" class="w-10 h-10 rounded-full bg-[#DC143C] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Red Velvet"></button>
+                        </div>
+                    </div>
+
+                    <div class="bg-baker-50 p-6 rounded-2xl border border-baker-200">
+                        <h3 class="font-semibold text-baker-600 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-fill-drip"></i> Icing Flavour
+                        </h3>
+                        <div class="flex gap-3 flex-wrap">
+                            <button onclick="changeIcing('#ffb7c5')" class="w-10 h-10 rounded-full bg-[#ffb7c5] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Strawberry"></button>
+                            <button onclick="changeIcing('#ffffff')" class="w-10 h-10 rounded-full bg-white border-2 border-gray-200 shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Vanilla Buttercream"></button>
+                            <button onclick="changeIcing('#6B8E23')" class="w-10 h-10 rounded-full bg-[#6B8E23] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Matcha"></button>
+                            <button onclick="changeIcing('#4B0082')" class="w-10 h-10 rounded-full bg-[#4B0082] border-2 border-white shadow-md hover:scale-110 transition ring-2 ring-transparent hover:ring-baker-500" data-tip="Blueberry"></button>
+                        </div>
+                    </div>
+
+                    <div class="bg-baker-50 p-6 rounded-2xl border border-baker-200">
+                        <h3 class="font-semibold text-baker-600 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Decorations
+                        </h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" checked onchange="toggleDecor('cherry', this.checked)" class="w-5 h-5 text-baker-500 rounded focus:ring-baker-500">
+                                <span class="text-sm font-medium">Cherry on Top</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" checked onchange="toggleDecor('candle', this.checked)" class="w-5 h-5 text-baker-500 rounded focus:ring-baker-500">
+                                <span class="text-sm font-medium">Celebration Candle</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleDecor('sprinkles', this.checked)" class="w-5 h-5 text-baker-500 rounded focus:ring-baker-500">
+                                <span class="text-sm font-medium">Rainbow Sprinkles</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-4 bg-baker-500 text-white rounded-xl font-bold shadow-lg hover:bg-baker-600 transition-all flex items-center justify-center gap-2" onclick="openOverlay()">
+                        <i class="fa-solid fa-check"></i> Order This Design
+                    </button>
+                </div>
+
+                <!-- 3D Canvas -->
+                <div class="lg:col-span-2">
+                    <div id="cake-studio-canvas" class="w-full h-[600px] rounded-2xl overflow-hidden shadow-inner bg-gradient-to-b from-gray-50 to-white border border-gray-200 relative">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-gray-500 shadow-sm border border-gray-200">
+                            <i class="fa-solid fa-hand-pointer mr-1"></i> Drag to rotate
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== BENTO GRID ==================== -->
+    <section id="shop" class="py-20 bg-baker-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold text-baker-600 mb-4">Shop by Occasion</h2>
+                <p class="text-gray-600">Perfect treats for every celebration</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px]">
+                <!-- Large Birthday -->
+                <div class="col-span-2 row-span-2 bento-card cursor-pointer group" onclick="openOverlay('Birthday Cakes')">
+                    <img src="https://cdn.bakerdays.com/media/wysiwyg/birthday-cakes-delivered-to-your-door_4.webp" alt="Birthday" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="bento-overlay absolute inset-0 flex flex-col justify-end p-6">
+                        <span class="text-baker-400 text-sm font-semibold mb-1">Most Popular</span>
+                        <h3 class="text-white font-display text-2xl font-bold">Birthday Cakes</h3>
+                        <p class="text-white/80 text-sm mt-1">From £12 · Next day delivery</p>
+                    </div>
+                </div>
+
+                <!-- Cupcakes -->
+                <div class="col-span-1 row-span-2 bento-card cursor-pointer" onclick="openOverlay('Cupcakes')">
+                    <img src="https://cdn.bakerdays.com/media/wysiwyg/cupcakes_1.webp" alt="Cupcakes" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="bento-overlay absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 class="text-white font-display text-xl font-bold">Cupcakes</h3>
+                        <p class="text-white/80 text-xs">Box of 12</p>
+                    </div>
+                </div>
+
+                <!-- Brownies -->
+                <div class="col-span-1 row-span-1 bento-card cursor-pointer" onclick="openOverlay('Brownies')">
+                    <img src="https://cdn.bakerdays.com/media/wysiwyg/brownie-1_1.webp" alt="Brownies" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="bento-overlay absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 class="text-white font-display text-lg font-bold">Brownies</h3>
+                    </div>
+                </div>
+
+                <!-- Father's Day -->
+                <div class="col-span-1 row-span-1 bento-card cursor-pointer relative bg-baker-600" onclick="openOverlay('Father\'s Day')">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                        <i class="fa-solid fa-shirt text-baker-400 text-3xl mb-2"></i>
+                        <h3 class="text-white font-display text-lg font-bold">Father's Day</h3>
+                        <span class="text-baker-300 text-xs mt-1">June 21st</span>
+                    </div>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="col-span-2 row-span-1 bento-card cursor-pointer" onclick="openOverlay('Photo Cakes')">
+                    <img src="https://cdn.bakerdays.com/media/wysiwyg/FD-CAKE-headers_4.jpg" alt="Photo" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="bento-overlay absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 class="text-white font-display text-xl font-bold">Photo Upload Cakes</h3>
+                        <p class="text-white/80 text-sm">Add your favourite memory</p>
+                    </div>
+                </div>
+
+                <!-- Pride -->
+                <div class="col-span-1 row-span-1 bento-card cursor-pointer" onclick="openOverlay('Pride')">
+                    <img src="https://cdn.bakerdays.com/media/wysiwyg/Pride-collection.jpg" alt="Pride" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="bento-overlay absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 class="text-white font-display text-lg font-bold">Pride 2026</h3>
+                    </div>
+                </div>
+
+                <!-- Seasonal -->
+                <div class="col-span-1 row-span-1 bento-card cursor-pointer bg-gradient-to-br from-baker-800 to-baker-900" onclick="openOverlay('Seasonal')">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                        <i class="fa-solid fa-snowflake text-white text-2xl mb-2"></i>
+                        <h3 class="text-white font-display text-lg font-bold">Seasonal</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRODUCT CAROUSEL ==================== -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="font-display text-3xl lg:text-4xl font-bold text-baker-600 mb-2">Father's Day 2026</h2>
+                    <p class="text-gray-600">Make Dad's day extra sweet</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="scrollCarousel(-1)" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-baker-500 hover:text-white hover:border-baker-500 transition-all" data-tip="Previous">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button onclick="scrollCarousel(1)" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-baker-500 hover:text-white hover:border-baker-500 transition-all" data-tip="Next">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="carousel" class="carousel-track flex gap-6 overflow-x-auto pb-8">
+                <!-- Card 1 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Best Grandad Hamper')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50 relative">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/p/a/pakfd05-1.jpg" alt="Best Grandad Hamper" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 bg-baker-800 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Best Grandad Hamper</h3>
+                        <p class="text-baker-600 font-bold">£24.99</p>
+                        <div class="mt-3 flex gap-2">
+                            <span class="text-xs bg-baker-100 text-baker-600 px-2 py-1 rounded">Letterbox</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Gift</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Salted Caramel Dad Brownies')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/b/w/bwnfdgen05-fd.jpg" alt="Brownies" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Salted Caramel Dad Brownies</h3>
+                        <p class="text-baker-600 font-bold">£18.99</p>
+                        <div class="mt-3 flex gap-2">
+                            <span class="text-xs bg-baker-100 text-baker-600 px-2 py-1 rounded">Gluten Free</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Starry No.1 Dad Cake')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/3/3330_1543834787_1576preview-web_qxepflpzvuo36tty.jpg" alt="Dad Cake" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Starry No.1 Dad Cake</h3>
+                        <p class="text-baker-600 font-bold">£19.99</p>
+                        <div class="mt-3 flex gap-2">
+                            <span class="text-xs bg-baker-100 text-baker-600 px-2 py-1 rounded">Personalised</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Dad Photo Cake')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/9/8/981_1590742429_5_hppz10dptbmmfff5.jpg" alt="Photo Cake" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Dad Photo Cake</h3>
+                        <p class="text-baker-600 font-bold">£22.99</p>
+                        <div class="mt-3 flex gap-2">
+                            <span class="text-xs bg-baker-100 text-baker-600 px-2 py-1 rounded">Photo Upload</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Love You Dad Cupcakes')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/d/3d-web_6.jpg" alt="Cupcakes" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Love You Dad Cupcakes</h3>
+                        <p class="text-baker-600 font-bold">£16.99</p>
+                        <div class="mt-3 flex gap-2">
+                            <span class="text-xs bg-baker-100 text-baker-600 px-2 py-1 rounded">Box of 12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="carousel-card min-w-[280px] bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer" onclick="openOverlay('Adventure Dad Cake')">
+                    <div class="h-[280px] overflow-hidden bg-gray-50">
+                        <img src="https://cdn.bakerdays.com/media/catalog/product/cache/e224052e723b930a64c0a99f1eb7e4d2/3/d/3d_127_25.jpg" alt="Adventure" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 mb-1">Adventure Dad Cake</h3>
+                        <p class="text-baker-600 font-bold">£21.99</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES ==================== -->
+    <section class="py-16 bg-baker-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="space-y-3">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h3 class="font-semibold">Next Day Delivery</h3>
+                    <p class="text-white/70 text-sm">Order by 2pm across the UK</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-hand-sparkles"></i>
+                    </div>
+                    <h3 class="font-semibold">Handcrafted</h3>
+                    <p class="text-white/70 text-sm">Baked fresh in Nottingham</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-pen-fancy"></i>
+                    </div>
+                    <h3 class="font-semibold">Fully Personalised</h3>
+                    <p class="text-white/70 text-sm">Add names, photos & messages</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <h3 class="font-semibold">Dietary Options</h3>
+                    <p class="text-white/70 text-sm">Gluten free, dairy free & vegan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-baker-600 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-baker-600">
+                            <i class="fa-solid fa-cake-candles text-sm"></i>
+                        </div>
+                        <span class="font-display text-xl font-bold">bakerdays</span>
+                    </div>
+                    <p class="text-white/70 text-sm leading-relaxed">
+                        Personalised cakes, cupcakes and brownies delivered through your letterbox. 
+                        Making celebrations special since 2008.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"><i class="fa-brands fa-instagram text-sm"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"><i class="fa-brands fa-pinterest-p text-sm"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Shop</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="#" class="hover:text-white transition">Birthday Cakes</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cupcakes</a></li>
+                        <li><a href="#" class="hover:text-white transition">Brownies</a></li>
+                        <li><a href="#" class="hover:text-white transition">Photo Cakes</a></li>
+                        <li><a href="#" class="hover:text-white transition">Corporate</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Help</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="#" class="hover:text-white transition">Delivery Info</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cake Sizes</a></li>
+                        <li><a href="#" class="hover:text-white transition">Ingredients</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Reviews</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Newsletter</h4>
+                    <p class="text-sm text-white/70 mb-4">Get 10% off your first order</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Your email" class="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white/50 text-sm">
+                        <button class="px-4 py-2 bg-baker-400 text-baker-600 rounded-lg font-semibold hover:bg-white transition text-sm">Join</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50">
+                <p>© 2026 Treats and Bites Ltd. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-white transition">Privacy</a>
+                    <a href="#" class="hover:text-white transition">Terms</a>
+                    <a href="#" class="hover:text-white transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== OVERLAY MODAL ==================== -->
+    <div id="overlay-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeOverlay()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 pointer-events-auto transform transition-all scale-95 opacity-0" id="overlay-content">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="font-display text-2xl font-bold text-baker-600" id="overlay-title">Product Quick View</h3>
+                    <button onclick="closeOverlay()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-xmark text-gray-600"></i>
+                    </button>
+                </div>
+                <div class="bg-baker-50 rounded-xl p-6 mb-6 text-center">
+                    <i class="fa-solid fa-cake-candles text-4xl text-baker-500 mb-3"></i>
+                    <p class="text-gray-600 mb-4" id="overlay-desc">Personalise this design with your own message and choose your favourite recipe.</p>
+                    <div class="flex justify-center gap-2 mb-4">
+                        <span class="px-3 py-1 bg-white rounded-full text-xs font-medium text-baker-600 border border-baker-200">Victoria Sponge</span>
+                        <span class="px-3 py-1 bg-white rounded-full text-xs font-medium text-baker-600 border border-baker-200">Chocolate</span>
+                        <span class="px-3 py-1 bg-white rounded-full text-xs font-medium text-baker-600 border border-baker-200">Lemon</span>
+                    </div>
+                    <p class="font-bold text-2xl text-baker-600">From £12.00</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex-1 py-3 bg-baker-500 text-white rounded-xl font-semibold hover:bg-baker-600 transition">Add to Cart</button>
+                    <button class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition" onclick="closeOverlay()">Keep Browsing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PIE MENU ==================== -->
+    <div class="fixed bottom-8 left-8 z-40">
+        <div class="pie-wrapper" id="pie-menu">
+            <div class="pie-item" onclick="window.scrollTo(0,0)" data-tip="Home"><i class="fa-solid fa-house"></i></div>
+            <div class="pie-item" onclick="document.getElementById('cake-studio').scrollIntoView({behavior:'smooth'})" data-tip="3D Studio"><i class="fa-solid fa-cube"></i></div>
+            <div class="pie-item" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" data-tip="Shop"><i class="fa-solid fa-bag-shopping"></i></div>
+            <div class="pie-item" onclick="openChat()" data-tip="Chat"><i class="fa-solid fa-comments"></i></div>
+            <div class="pie-item" onclick="openOverlay('Help')" data-tip="Help"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="pie-item" onclick="document.querySelector('footer').scrollIntoView({behavior:'smooth'})" data-tip="Contact"><i class="fa-solid fa-envelope"></i></div>
+            
+            <div class="pie-trigger" onclick="togglePie()" data-tip="Quick Menu">
+                <i class="fa-solid fa-plus text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAT BOT ==================== -->
+    <div class="fixed bottom-8 right-8 z-40 flex flex-col items-end">
+        <!-- Chat Window -->
+        <div id="chat-window" class="chat-window closed w-[360px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-4">
+            <div class="bg-baker-500 p-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold text-sm">Bakerdays Assistant</h4>
+                        <p class="text-white/70 text-xs flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white/80 hover:text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div id="chat-messages" class="h-[320px] overflow-y-auto p-4 flex flex-col bg-gray-50">
+                <div class="chat-bubble bot">
+                    Hi there! 🎂 I'm here to help you find the perfect cake. Ask me about flavours, delivery, or personalisation!
+                </div>
+            </div>
+            
+            <div class="p-3 bg-white border-t border-gray-100">
+                <div class="flex gap-2">
+                    <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 px-4 py-2 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-baker-500 border border-gray-200" onkeypress="if(event.key==='Enter') sendChat()">
+                    <button onclick="sendChat()" class="w-10 h-10 bg-baker-500 text-white rounded-full flex items-center justify-center hover:bg-baker-600 transition shrink-0">
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </div>
+                <div class="flex gap-2 mt-2 overflow-x-auto pb-1">
+                    <button onclick="quickChat('What flavours do you have?')" class="px-3 py-1 bg-baker-50 text-baker-600 rounded-full text-xs whitespace-nowrap hover:bg-baker-200 transition">Flavours?</button>
+                    <button onclick="quickChat('When do you deliver?')" class="px-3 py-1 bg-baker-50 text-baker-600 rounded-full text-xs whitespace-nowrap hover:bg-baker-200 transition">Delivery?</button>
+                    <button onclick="quickChat('Do you have gluten free?')" class="px-3 py-1 bg-baker-50 text-baker-600 rounded-full text-xs whitespace-nowrap hover:bg-baker-200 transition">Gluten Free?</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Toggle -->
+        <button onclick="toggleChat()" class="w-14 h-14 bg-baker-500 text-white rounded-full shadow-lg shadow-baker-500/30 flex items-center justify-center text-xl hover:bg-baker-600 hover:scale-110 transition-all" data-tip="Chat with us">
+            <i class="fa-solid fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.remove('shadow-md');
+            }
+        });
+
+        // Pie Menu
+        function togglePie() {
+            document.getElementById('pie-menu').classList.toggle('active');
+        }
+
+        // Chat Bot
+        function toggleChat() {
+            document.getElementById('chat-window').classList.toggle('closed');
+        }
+        function openChat() {
+            document.getElementById('chat-window').classList.remove('closed');
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `chat-bubble ${sender}`;
+            div.textContent = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function quickChat(text) {
+            addMessage(text, 'user');
+            setTimeout(() => botReply(text), 600);
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
+            input.value = '';
+            setTimeout(() => botReply(text), 800);
+        }
+
+        function botReply(userText) {
+            const lower = userText.toLowerCase();
+            let reply = "I'm here to help! For detailed assistance, you can also call us on +44 (0)333 577 2559 or email sales@bakerdays.com.";
+            
+            if (lower.includes('flavour') || lower.includes('flavor') || lower.includes('taste')) {
+                reply = "We offer Victoria Sponge, Rich Chocolate, Lemon Drizzle, Red Velvet, Carrot, and Coffee & Walnut! We also have gluten-free and vegan options. 🍰";
+            } else if (lower.includes('deliver') || lower.includes('post') || lower.includes('ship')) {
+                reply = "We deliver next day across the UK if you order by 2pm! We also deliver to BFPO addresses. 🚚";
+            } else if (lower.includes('gluten') || lower.includes('vegan') || lower.includes('dairy') || lower.includes('free')) {
+                reply = "Yes! We have gluten-free, wheat-free, dairy-free and vegan cakes. Just filter by dietary requirements on any category page. 🌱";
+            } else if (lower.includes('price') || lower.includes('cost') || lower.includes('how much')) {
+                reply = "Our letterbox cakes start from £12, standard cakes from £19.99, and brownies from £14.99. Personalisation is included! 💰";
+            } else if (lower.includes('photo') || lower.includes('picture') || lower.includes('upload')) {
+                reply = "You can upload any photo and we'll print it on your cake using edible ink! Just choose a 'Photo Upload' design. 📸";
+            } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+                reply = "Hello! Welcome to bakerdays. How can I help make your celebration special today? 🎉";
+            }
+            
+            addMessage(reply, 'bot');
+        }
+
+        // Carousel
+        function scrollCarousel(direction) {
+            const container = document.getElementById('carousel');
+            const scrollAmount = 320;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // Overlay Modal
+        function openOverlay(title = 'Custom Cake') {
+            const modal = document.getElementById('overlay-modal');
+            const content = document.getElementById('overlay-content');
+            document.getElementById('overlay-title').textContent = title;
+            document.getElementById('overlay-desc').textContent = `Personalise your ${title} with a name, message, or photo. Choose from our delicious range of recipes and sizes.`;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeOverlay() {
+            const modal = document.getElementById('overlay-modal');
+            const content = document.getElementById('overlay-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close overlay on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeOverlay();
+        });
+    </script>
+
+    <!-- ==================== THREE.JS 3D CAKE ==================== -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Global material references for UI controls
+        window.spongeMat = null;
+        window.icingMat = null;
+        window.cherryMesh = null;
+        window.candleMesh = null;
+        window.flameMesh = null;
+        window.sprinklesGroup = null;
+
+        function createCakeScene(containerId, autoRotate = true) {
+            const container = document.getElementById(containerId);
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xfffaf5);
+
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+            camera.position.set(7, 5, 7);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 2.0;
+            controls.minDistance = 5;
+            controls.maxDistance = 15;
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight.position.set(5, 10, 7);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            scene.add(dirLight);
+
+            const fillLight = new THREE.DirectionalLight(0xffd1b3, 0.5);
+            fillLight.position.set(-5, 0, -5);
+            scene.add(fillLight);
+
+            // Cake Group
+            const cakeGroup = new THREE.Group();
+            scene.add(cakeGroup);
+
+            // Plate
+            const plateGeo = new THREE.CylinderGeometry(4.2, 4.2, 0.2, 64);
+            const plateMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+            const plate = new THREE.Mesh(plateGeo, plateMat);
+            plate.position.y = -0.1;
+            plate.receiveShadow = true;
+            cakeGroup.add(plate);
+
+            // Materials
+            const spongeMaterial = new THREE.MeshStandardMaterial({ color: 0xf5deb3, roughness: 0.9 });
+            const icingMaterial = new THREE.MeshStandardMaterial({ color: 0xffb7c5, roughness: 0.4, metalness: 0.05 });
+            window.spongeMat = spongeMaterial;
+            window.icingMat = icingMaterial;
+
+            // Tier 1 (Bottom)
+            const t1 = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 1.5, 64), spongeMaterial);
+            t1.position.y = 0.75;
+            t1.castShadow = true;
+            t1.receiveShadow = true;
+            cakeGroup.add(t1);
+
+            // Drip Icing 1
+            const i1 = new THREE.Mesh(new THREE.CylinderGeometry(3.15, 3.15, 0.35, 64), icingMaterial);
+            i1.position.y = 1.58;
+            i1.castShadow = true;
+            cakeGroup.add(i1);
+
+            // Tier 2
+            const t2 = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 1.2, 64), spongeMaterial);
+            t2.position.y = 1.8;
+            t2.castShadow = true;
+            cakeGroup.add(t2);
+
+            const i2 = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.3, 0.25, 64), icingMaterial);
+            i2.position.y = 2.45;
+            i2.castShadow = true;
+            cakeGroup.add(i2);
+
+            // Tier 3
+            const t3 = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 1, 64), spongeMaterial);
+            t3.position.y = 2.7;
+            t3.castShadow = true;
+            cakeGroup.add(t3);
+
+            const i3 = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.2, 64), icingMaterial);
+            i3.position.y = 3.2;
+            i3.castShadow = true;
+            cakeGroup.add(i3);
+
+            // Cherry
+            const cherryMat = new THREE.MeshStandardMaterial({ color: 0xdc143c, roughness: 0.2, metalness: 0.3 });
+            const cherry = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), cherryMat);
+            cherry.position.y = 3.5;
+            cherry.castShadow = true;
+            cakeGroup.add(cherry);
+            window.cherryMesh = cherry;
+
+            // Candle
+            const candleMat = new THREE.MeshStandardMaterial({ color: 0x87ceeb, emissive: 0x112244 });
+            const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16), candleMat);
+            candle.position.set(0.6, 3.6, 0.4);
+            candle.castShadow = true;
+            cakeGroup.add(candle);
+            window.candleMesh = candle;
+
+            // Flame
+            const flameMat = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+            const flame = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), flameMat);
+            flame.position.set(0.6, 4.05, 0.4);
+            cakeGroup.add(flame);
+            window.flameMesh = flame;
+
+            // Sprinkles (hidden by default)
+            const sprinkles = new THREE.Group();
+            const sprinkleGeo = new THREE.CapsuleGeometry(0.04, 0.12, 4, 8);
+            const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff];
+            for (let i = 0; i < 40; i++) {
+                const mat = new THREE.MeshStandardMaterial({ color: colors[Math.floor(Math.random() * colors.length)] });
+                const mesh = new THREE.Mesh(sprinkleGeo, mat);
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * 2.8;
+                mesh.position.set(Math.cos(angle) * radius, 1.75 + Math.random() * 1.5, Math.sin(angle) * radius);
+                mesh.rotation.set(Math.random(), Math.random(), Math.random());
+                sprinkles.add(mesh);
+            }
+            sprinkles.visible = false;
+            cakeGroup.add(sprinkles);
+            window.sprinklesGroup = sprinkles;
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                
+                // Flicker flame
+                if (window.flameMesh) {
+                    const time = Date.now() * 0.01;
+                    window.flameMesh.scale.y = 1 + Math.sin(time) * 0.2;
+                    window.flameMesh.position.y = 4.05 + Math.sin(time * 2) * 0.02;
+                }
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            });
+
+            return { scene, camera, renderer };
+        }
+
+        // Initialize Hero Canvas (simpler view)
+        createCakeScene('hero-canvas', true);
+        document.getElementById('hero-loader').style.display = 'none';
+
+        // Initialize Studio Canvas
+        createCakeScene('cake-studio-canvas', false);
+
+        // UI Control Functions
+        window.changeSponge = (color) => {
+            if (window.spongeMat) window.spongeMat.color.set(color);
+        };
+        window.changeIcing = (color) => {
+            if (window.icingMat) window.icingMat.color.set(color);
+        };
+        window.toggleDecor = (type, visible) => {
+            if (type === 'cherry' && window.cherryMesh) window.cherryMesh.visible = visible;
+            if (type === 'candle' && window.candleMesh) {
+                window.candleMesh.visible = visible;
+                if (window.flameMesh) window.flameMesh.visible = visible;
+            }
+            if (type === 'sprinkles' && window.sprinklesGroup) window.sprinklesGroup.visible = visible;
+        };
+    </script>
+</body>
+</html>
