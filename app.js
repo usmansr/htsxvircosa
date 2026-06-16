@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const nodemailer = require('nodemailer');
+const { spawn } = require('child_process');
+const path = require('path');
+
 
 // Middleware
 app.use(express.static('.'));
@@ -144,6 +147,47 @@ app.post('/contact-us', async (req, res) => {
         res.redirect('/contact-us?error=true');
     }
 });
+
+app.get('/visualdsa', (req, res) => {
+    res.render('visualdsa');
+});
+
+app.post('/visualdsa/predict', (req, res) => {
+    const { code } = req.body;
+    if (!code || !code.trim()) {
+        return res.status(400).json({ error: 'No code provided' });
+    }
+
+    const scriptPath = path.join(__dirname, 'python', 'milestone2_visualize.py');
+    const modelPath  = path.join(__dirname, 'python', 'visualdsa_nb_model.pkl');
+
+    // Pass code via stdin to avoid shell-escaping issues
+    const py = spawn('python', [scriptPath, '--model', modelPath], {
+        cwd: path.join(__dirname, 'python')
+    });
+
+    let stdout = '', stderr = '';
+    py.stdin.write(code);
+    py.stdin.end();
+
+    py.stdout.on('data', d => stdout += d.toString());
+    py.stderr.on('data', d => stderr += d.toString());
+
+    py.on('close', code => {
+        if (code !== 0) {
+            console.error('Python error:', stderr);
+            return res.status(500).json({ error: 'Prediction failed', detail: stderr });
+        }
+        try {
+            const result = JSON.parse(stdout);
+            res.json(result);
+        } catch (e) {
+            console.error('Parse error. stdout:', stdout);
+            res.status(500).json({ error: 'Bad response from Python' });
+        }
+    });
+});
+
 
 app.listen(process.env.PORT || 3000, () => {
     console.log(`Server is running on port ${process.env.PORT || 3000}`);

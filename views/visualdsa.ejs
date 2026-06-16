@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisualDSA - Vircosa</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: #f8f5f2;
+        color: #6b4423;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          90deg,
+          #6b4423 0%,
+          #8b5a2b 25%,
+          #6b4423 50%,
+          #8b5a2b 75%,
+          #6b4423 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 8s ease-in-out infinite;
+        color: #fff8f0;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 8px rgba(107, 68, 35, 0.15);
+        flex-shrink: 0;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .header-brand {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .header-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .header-tagline {
+        font-size: 0.75rem;
+        font-weight: 300;
+        opacity: 0.9;
+        font-style: italic;
+      }
+
+      /* Main Layout */
+      .main-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* Left Panel */
+      .left-panel {
+        width: 40%;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        border-right: 1px solid rgba(139, 90, 43, 0.15);
+      }
+
+      .panel-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #8b5a2b;
+        opacity: 0.8;
+      }
+
+      .code-textarea {
+        flex: 1;
+        background-color: #2d2d2d;
+        color: #e8e8e8;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        padding: 16px;
+        border: 2px solid rgba(139, 90, 43, 0.2);
+        border-radius: 8px;
+        resize: none;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .code-textarea:focus {
+        border-color: #8b5a2b;
+      }
+
+      .code-textarea::placeholder {
+        color: #888;
+      }
+
+      .detect-btn {
+        background-color: #8b5a2b;
+        color: #fff8f0;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-family: "Montserrat", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        letter-spacing: 0.5px;
+      }
+
+      .detect-btn:hover {
+        background-color: #6b4423;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(107, 68, 35, 0.25);
+      }
+
+      .detect-btn:active {
+        transform: translateY(0);
+      }
+
+      .quick-load {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill-btn {
+        background-color: transparent;
+        border: 1.5px solid #8b5a2b;
+        color: #8b5a2b;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        letter-spacing: 0.5px;
+      }
+
+      .pill-btn:hover {
+        background-color: #8b5a2b;
+        color: #fff8f0;
+      }
+
+      /* Right Panel */
+      .right-panel {
+        width: 60%;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff8f0;
+        position: relative;
+      }
+
+      .viz-container {
+        flex: 1;
+        border: 2px dashed rgba(139, 90, 43, 0.2);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .viz-container.has-content {
+        border-style: solid;
+        border-color: rgba(139, 90, 43, 0.15);
+        background-color: #fff;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #8b5a2b;
+        opacity: 0.5;
+      }
+
+      .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 12px;
+        stroke: #8b5a2b;
+      }
+
+      .empty-state p {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .placeholder-svg {
+        width: 100%;
+        height: 100%;
+        display: none;
+      }
+
+      .placeholder-svg.active {
+        display: block;
+      }
+
+      .node-circle {
+        animation: pulse 2.5s ease-in-out infinite;
+      }
+
+      .node-circle:nth-child(2) {
+        animation-delay: 0s;
+      }
+      .node-circle:nth-child(6) {
+        animation-delay: 0.4s;
+      }
+      .node-circle:nth-child(10) {
+        animation-delay: 0.8s;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.95;
+        }
+        50% {
+          opacity: 0.65;
+        }
+      }
+
+      .confidence-bar {
+        margin-top: 12px;
+        padding: 12px 16px;
+        background-color: #fff;
+        border-radius: 6px;
+        border: 1px solid rgba(139, 90, 43, 0.15);
+        display: none;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .confidence-bar.active {
+        display: flex;
+      }
+
+      .confidence-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b4423;
+        min-width: 120px;
+      }
+
+      .confidence-track {
+        flex: 1;
+        height: 8px;
+        background-color: rgba(139, 90, 43, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5a2b, #6b4423);
+        border-radius: 4px;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .confidence-value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #8b5a2b;
+        min-width: 50px;
+        text-align: right;
+      }
+
+      /* Legend */
+      .legend {
+        flex-shrink: 0;
+        padding: 14px 20px;
+        background-color: #fff8f0;
+        border-top: 1px solid rgba(139, 90, 43, 0.1);
+      }
+
+      .legend-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #8b5a2b;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+
+      .legend-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+      }
+
+      .legend-card {
+        background-color: #fff;
+        border: 1px solid rgba(139, 90, 43, 0.12);
+        border-radius: 6px;
+        padding: 10px 6px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: default;
+      }
+
+      .legend-card:hover {
+        border-color: #8b5a2b;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(107, 68, 35, 0.1);
+      }
+
+      .legend-card-icon {
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+        line-height: 1;
+      }
+
+      .legend-card-name {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #6b4423;
+        letter-spacing: 0.5px;
+      }
+
+      .legend-card-desc {
+        font-size: 0.6rem;
+        color: #8b5a2b;
+        opacity: 0.8;
+        margin-top: 2px;
+        line-height: 1.3;
+      }
+
+      /* Mobile */
+      @media (max-width: 768px) {
+        body {
+          overflow-y: auto;
+          height: auto;
+        }
+
+        .main-container {
+          flex-direction: column;
+          overflow: visible;
+        }
+
+        .left-panel,
+        .right-panel {
+          width: 100%;
+          height: 50vh;
+          min-height: 300px;
+        }
+
+        .right-panel {
+          border-top: 1px solid rgba(139, 90, 43, 0.15);
+        }
+
+        .legend-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .header-tagline {
+          display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .legend-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-brand">
+        <span class="header-title">VisualDSA</span>
+        <span class="header-tagline"
+          >Paste C/C++ code — see your data structure</span
+        >
+      </div>
+    </header>
+
+    <div class="main-container">
+      <div class="left-panel">
+        <div class="panel-label">C / C++ Source</div>
+        <textarea
+          class="code-textarea"
+          placeholder="// Paste your C/C++ code here&#10;// Example:&#10;struct Node {&#10;    int data;&#10;    struct Node* next;&#10;};"
+        ></textarea>
+
+        <button class="detect-btn" onclick="detectAndVisualize()">
+          Detect & Visualize
+        </button>
+
+        <div class="panel-label">Quick Load</div>
+        <div class="quick-load">
+          <button class="pill-btn" onclick="loadExample('SLL')">SLL</button>
+          <button class="pill-btn" onclick="loadExample('DLL')">DLL</button>
+          <button class="pill-btn" onclick="loadExample('Stack')">Stack</button>
+          <button class="pill-btn" onclick="loadExample('Queue')">Queue</button>
+          <button class="pill-btn" onclick="loadExample('BST')">BST</button>
+          <button class="pill-btn" onclick="loadExample('AVL')">AVL</button>
+          <button class="pill-btn" onclick="loadExample('Graph')">Graph</button>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="viz-container" id="vizContainer">
+          <div class="empty-state" id="emptyState">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+              <circle cx="15" cy="15" r="2"></circle>
+              <line x1="17" y1="15" x2="21" y2="15"></line>
+            </svg>
+            <p>Your visualization appears here</p>
+          </div>
+
+          <div
+            id="vizSvgWrapper"
+            style="
+              width: 100%;
+              height: 100%;
+              display: none;
+              align-items: center;
+              justify-content: center;
+              overflow: auto;
+              padding: 12px;
+            "
+          ></div>
+        </div>
+
+        <div class="confidence-bar" id="confidenceBar">
+          <div class="confidence-label" id="confidenceLabel">
+            Predicted: SLL
+          </div>
+          <div class="confidence-track">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <div class="confidence-value" id="confidenceValue">87%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">Supported Structures</div>
+      <div class="legend-grid">
+        <div class="legend-card">
+          <div class="legend-card-icon">→</div>
+          <div class="legend-card-name">SLL</div>
+          <div class="legend-card-desc">Singly Linked List</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">↔</div>
+          <div class="legend-card-name">DLL</div>
+          <div class="legend-card-desc">Doubly Linked List</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">⊤</div>
+          <div class="legend-card-name">Stack</div>
+          <div class="legend-card-desc">LIFO structure</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">≡</div>
+          <div class="legend-card-name">Queue</div>
+          <div class="legend-card-desc">FIFO structure</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">◬</div>
+          <div class="legend-card-name">BST</div>
+          <div class="legend-card-desc">Binary Search Tree</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">⚖</div>
+          <div class="legend-card-name">AVL</div>
+          <div class="legend-card-desc">Self-balancing BST</div>
+        </div>
+        <div class="legend-card">
+          <div class="legend-card-icon">◉</div>
+          <div class="legend-card-name">Graph</div>
+          <div class="legend-card-desc">Adjacency structure</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ─────────────────────────────────────────────────────────────────
+      // 1.  QUICK-LOAD EXAMPLES
+      // ─────────────────────────────────────────────────────────────────
+      const examples = {
+        SLL: `struct Node { int data; struct Node* next; };
+struct Node* head = NULL;
+void insert(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = head;
+    head = newNode;
+}`,
+        DLL: `struct Node { int data; struct Node* next; struct Node* prev; };
+struct Node* head = NULL;
+struct Node* tail = NULL;
+void insertFront(int val) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = val; n->prev = NULL; n->next = head;
+    if (head) head->prev = n;
+    head = n;
+}`,
+        Stack: `#define MAX 100
+int stack[MAX];
+int top = -1;
+void push(int x) { if (top < MAX-1) stack[++top] = x; }
+int  pop()       { return (top >= 0) ? stack[top--] : -1; }
+int  peek()      { return stack[top]; }`,
+        Queue: `#define MAX 100
+int queue[MAX];
+int front = 0, rear = -1;
+void enqueue(int x) { if (rear < MAX-1) queue[++rear] = x; }
+int  dequeue()       { return (front <= rear) ? queue[front++] : -1; }`,
+        BST: `struct Node { int key; struct Node* left; struct Node* right; };
+struct Node* insert(struct Node* root, int key) {
+    if (!root) { struct Node* n = malloc(sizeof(struct Node)); n->key=key; n->left=n->right=NULL; return n; }
+    if (key < root->key) root->left  = insert(root->left,  key);
+    else                 root->right = insert(root->right, key);
+    return root;
+}
+void inorder(struct Node* root) { if (!root) return; inorder(root->left); printf("%d ",root->key); inorder(root->right); }`,
+        AVL: `struct Node { int key, height; struct Node* left; struct Node* right; };
+int getHeight(struct Node* n)   { return n ? n->height : 0; }
+int getBalance(struct Node* n)  { return n ? getHeight(n->left)-getHeight(n->right) : 0; }
+struct Node* rotateRight(struct Node* y) {
+    struct Node* x = y->left; x->right = y;
+    y->height = 1+fmax(getHeight(y->left),getHeight(y->right));
+    x->height = 1+fmax(getHeight(x->left),getHeight(x->right));
+    return x;
+}
+struct Node* rotateLeft(struct Node* x) {
+    struct Node* y = x->right; y->left = x;
+    x->height = 1+fmax(getHeight(x->left),getHeight(x->right));
+    y->height = 1+fmax(getHeight(y->left),getHeight(y->right));
+    return y;
+}`,
+        Graph: `#define V 6
+int adj[V][V] = {0};
+void addEdge(int u, int v) { adj[u][v]=1; adj[v][u]=1; }
+int visited[V];
+void dfs(int node) {
+    visited[node]=1;
+    for(int i=0;i<V;i++) if(adj[node][i] && !visited[i]) dfs(i);
+}`,
+      };
+
+      function loadExample(type) {
+        document.querySelector(".code-textarea").value = examples[type];
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // 2.  NAIVE BAYES KEYWORD CLASSIFIER  (JS port of Python fallback)
+      //     Mirrors milestone2_visualize.py → KEYWORDS + fallback_predict
+      // ─────────────────────────────────────────────────────────────────
+      const NB_KEYWORDS = {
+        0: ["head", "next", "node", "singly", "insert", "list", "null"], // SLL
+        1: [
+          "prev",
+          "head",
+          "tail",
+          "doubly",
+          "next",
+          "backward",
+          "insertfront",
+        ], // DLL
+        2: ["push", "pop", "top", "stack", "peek", "overflow"], // Stack
+        3: ["front", "rear", "enqueue", "dequeue", "queue", "fifo"], // Queue
+        4: ["left", "right", "root", "inorder", "bst", "binary", "search"], // BST
+        5: [
+          "avl",
+          "rotate",
+          "balance",
+          "height",
+          "rotateright",
+          "rotateleft",
+          "getbalance",
+          "getheight",
+        ], // AVL
+        6: [
+          "adj",
+          "addedge",
+          "vertex",
+          "edge",
+          "dfs",
+          "bfs",
+          "graph",
+          "visited",
+          "push_back",
+          "vector",
+        ], // Graph
+      };
+      const CLASS_NAMES = [
+        "Singly Linked List",
+        "Doubly Linked List",
+        "Stack",
+        "Queue",
+        "BST",
+        "AVL Tree",
+        "Graph",
+      ];
+      const CLASS_SHORT = [
+        "SLL",
+        "DLL",
+        "Stack",
+        "Queue",
+        "BST",
+        "AVL",
+        "Graph",
+      ];
+
+      function preprocessCode(code) {
+        code = code.replace(/\/\/[^\n]*/g, " ");
+        code = code.replace(/\/\*[\s\S]*?\*\//g, " ");
+        code = code.replace(/"[^"]*"/g, " ");
+        code = code.toLowerCase();
+        code = code.replace(/[^a-z0-9_\s]/g, " ");
+        return code.replace(/\s+/g, " ").trim();
+      }
+
+      function naiveBayesPredict(code) {
+        const tokens = preprocessCode(code).split(" ");
+        const scores = [];
+        for (let i = 0; i < 7; i++) {
+          let s = 0;
+          for (const kw of NB_KEYWORDS[i]) {
+            for (const tok of tokens) {
+              if (tok.includes(kw)) s++;
+            }
+          }
+          scores.push(s);
+        }
+        const total = scores.reduce((a, b) => a + b, 0) || 1;
+        const probs = scores.map((s) => s / total);
+        const pred = probs.indexOf(Math.max(...probs));
+        return { pred, probs, confidence: Math.max(...probs) * 100 };
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // 3.  SVG VISUALIZATIONS  (one function per structure)
+      // ─────────────────────────────────────────────────────────────────
+      const C = {
+        fill: "#8B5A2B",
+        fillLight: "#D4956A",
+        bg: "#FFF8F0",
+        border: "#6B4423",
+        text: "#FFF8F0",
+        muted: "#6B4423",
+        edge: "#8B5A2B",
+        edgeLight: "rgba(139,90,43,0.35)",
+        null: "#C4A882",
+        ptrFill: "#F0E6D3",
+      };
+
+      function randVals(n, lo = 10, hi = 99) {
+        const pool = [];
+        for (let i = lo; i <= hi; i++) pool.push(i);
+        const out = [];
+        while (out.length < n) {
+          const idx = Math.floor(Math.random() * pool.length);
+          out.push(pool.splice(idx, 1)[0]);
+        }
+        return out;
+      }
+
+      /* ── helpers ── */
+      function nodeCircle(cx, cy, r, label, isRoot = false) {
+        const fill = isRoot ? C.fillLight : C.fill;
+        return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${C.border}" stroke-width="2"/>
+<text x="${cx}" y="${cy}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="${r * 0.7}" fill="${C.text}">${label}</text>`;
+      }
+      function nodeRect(x, y, w, h, label, fill = C.fill, fontSz = 14) {
+        return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="6" fill="${fill}" stroke="${C.border}" stroke-width="2"/>
+<text x="${x}" y="${y}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="${fontSz}" fill="${C.text}">${label}</text>`;
+      }
+      function arrow(x1, y1, x2, y2, dbl = false) {
+        const mid = dbl
+          ? `<polygon points="${x1 + 6},${y1 - 4} ${x1},${y1} ${x1 + 6},${y1 + 4}" fill="${C.edge}"/>`
+          : "";
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.edge}" stroke-width="2.5"/>
+<polygon points="${x2 - 6},${y2 - 4} ${x2},${y2} ${x2 - 6},${y2 + 4}" fill="${C.edge}"/>${mid}`;
+      }
+      function ptrBox(x, y, w, h) {
+        return `<rect x="${x}" y="${y - h / 2}" width="${w}" height="${h}" rx="3" fill="${C.ptrFill}" stroke="${C.border}" stroke-width="1.5"/>`;
+      }
+      function nullText(x, y) {
+        return `<text x="${x}" y="${y}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="${C.null}">∅</text>`;
+      }
+      function titleText(vw, label) {
+        return `<text x="${vw / 2}" y="22" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="14" fill="${C.muted}">${label}</text>`;
+      }
+
+      // SLL
+      function svgSLL(vals) {
+        const n = vals.length,
+          nw = 54,
+          nh = 34,
+          pw = 22,
+          gap = 20,
+          startX = 30,
+          cy = 80,
+          vw = (nw + pw + gap) * n + 30,
+          vh = 140;
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:260px">`;
+        s += titleText(vw, "Singly Linked List");
+        s += `<text x="${startX}" y="${cy - 26}" font-family="Montserrat,sans-serif" font-size="11" fill="${C.muted}" font-weight="600">head</text>`;
+        s += `<line x1="${startX + 16}" y1="${cy - 18}" x2="${startX + 16}" y2="${cy - nh / 2 - 2}" stroke="${C.muted}" stroke-width="1.5" stroke-dasharray="3,2"/>`;
+        for (let i = 0; i < n; i++) {
+          const bx = startX + i * (nw + pw + gap);
+          s += nodeRect(bx + nw / 2, cy, nw, nh, vals[i]);
+          s += ptrBox(bx + nw, cy, pw, nh);
+          if (i < n - 1) {
+            s += `<line x1="${bx + nw + pw}" y1="${cy}" x2="${bx + nw + pw + gap}" y2="${cy}" stroke="${C.edge}" stroke-width="2"/>`;
+            s += `<polygon points="${bx + nw + pw + gap - 5},${cy - 4} ${bx + nw + pw + gap + 1},${cy} ${bx + nw + pw + gap - 5},${cy + 4}" fill="${C.edge}"/>`;
+          } else {
+            s += nullText(bx + nw + pw / 2, cy);
+          }
+        }
+        s += `</svg>`;
+        return s;
+      }
+
+      // DLL
+      function svgDLL(vals) {
+        const n = vals.length,
+          nw = 54,
+          nh = 34,
+          pw = 18,
+          gap = 18,
+          startX = 28,
+          cy = 85,
+          vw = (nw + pw * 2 + gap) * n + 28,
+          vh = 150;
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:270px">`;
+        s += titleText(vw, "Doubly Linked List");
+        for (let i = 0; i < n; i++) {
+          const bx = startX + i * (nw + pw * 2 + gap);
+          // prev ptr
+          s += ptrBox(bx, cy, pw, nh);
+          // data box
+          s += nodeRect(bx + pw + nw / 2, cy, nw, nh, vals[i]);
+          // next ptr
+          s += ptrBox(bx + pw + nw, cy, pw, nh);
+          if (i === 0) s += nullText(bx + pw / 2, cy);
+          else {
+            // backward arrow
+            const prevRightX = bx - gap;
+            s += `<path d="M${bx + pw / 2},${cy - 6} C${bx + pw / 2 - 10},${cy - 20} ${prevRightX + pw / 2 + 10},${cy - 20} ${prevRightX + pw / 2},${cy - 6}" stroke="${C.fillLight}" stroke-width="1.8" fill="none"/>`;
+            s += `<polygon points="${bx + pw / 2 - 4},${cy - 8} ${bx + pw / 2},${cy - 4} ${bx + pw / 2 + 4},${cy - 8}" fill="${C.fillLight}"/>`;
+          }
+          if (i < n - 1) {
+            const nx = bx + pw * 2 + nw + gap;
+            s += `<line x1="${bx + pw * 2 + nw}" y1="${cy}" x2="${nx}" y2="${cy}" stroke="${C.edge}" stroke-width="2"/>`;
+            s += `<polygon points="${nx - 5},${cy - 4} ${nx + 1},${cy} ${nx - 5},${cy + 4}" fill="${C.edge}"/>`;
+          } else {
+            s += nullText(bx + pw * 2 + nw - pw / 2, cy);
+          }
+        }
+        // labels
+        s += `<text x="${startX}" y="${cy + 30}" font-family="Montserrat,sans-serif" font-size="10" fill="${C.muted}">head</text>`;
+        s += `<text x="${startX + (n - 1) * (nw + pw * 2 + gap) + pw + nw / 2}" y="${cy + 30}" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="10" fill="${C.muted}">tail</text>`;
+        s += `</svg>`;
+        return s;
+      }
+
+      // Stack
+      function svgStack(vals) {
+        const bw = 80,
+          bh = 36,
+          cx = 130,
+          startY = 50,
+          gap = 4,
+          vw = 260,
+          vh = vals.length * bh + vals.length * gap + 90;
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:320px">`;
+        s += titleText(vw, "Stack (LIFO)");
+        for (let i = 0; i < vals.length; i++) {
+          const y = startY + i * (bh + gap);
+          const isTop = i === 0;
+          s += nodeRect(
+            cx,
+            y + bh / 2,
+            bw,
+            bh,
+            vals[i],
+            isTop ? C.fillLight : C.fill,
+          );
+          if (isTop)
+            s += `<text x="${cx + bw / 2 + 10}" y="${y + bh / 2}" dy="0.35em" font-family="Montserrat,sans-serif" font-size="11" fill="${C.muted}" font-weight="600">← top</text>`;
+        }
+        // base line
+        const baseY = startY + vals.length * (bh + gap);
+        s += `<line x1="${cx - bw / 2}" y1="${baseY}" x2="${cx + bw / 2}" y2="${baseY}" stroke="${C.border}" stroke-width="3"/>`;
+        s += `</svg>`;
+        return s;
+      }
+
+      // Queue
+      function svgQueue(vals) {
+        const bw = 58,
+          bh = 40,
+          startX = 40,
+          cy = 80,
+          gap = 8,
+          vw = vals.length * (bw + gap) + 80,
+          vh = 160;
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:240px">`;
+        s += titleText(vw, "Queue (FIFO)");
+        for (let i = 0; i < vals.length; i++) {
+          const x = startX + i * (bw + gap);
+          s += nodeRect(x + bw / 2, cy, bw, bh, vals[i]);
+        }
+        // front / rear labels
+        s += `<text x="${startX + bw / 2}" y="${cy + 34}" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="${C.muted}" font-weight="600">front</text>`;
+        const lastX = startX + (vals.length - 1) * (bw + gap);
+        s += `<text x="${lastX + bw / 2}" y="${cy + 34}" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="${C.muted}" font-weight="600">rear</text>`;
+        // dequeue arrow left
+        s += `<path d="M${startX - 8},${cy} L${startX - 24},${cy}" stroke="${C.edge}" stroke-width="2"/>`;
+        s += `<polygon points="${startX - 28},${cy - 4} ${startX - 22},${cy} ${startX - 28},${cy + 4}" fill="${C.edge}"/>`;
+        s += `<text x="${startX - 30}" y="${cy - 10}" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="9" fill="${C.muted}">dequeue</text>`;
+        // enqueue arrow right
+        const endX = startX + vals.length * (bw + gap) - gap;
+        s += `<path d="M${endX + 8},${cy} L${endX + 24},${cy}" stroke="${C.edge}" stroke-width="2"/>`;
+        s += `<polygon points="${endX + 4},${cy - 4} ${endX + 10},${cy} ${endX + 4},${cy + 4}" fill="${C.edge}"/>`;
+        s += `<text x="${endX + 24}" y="${cy - 10}" font-family="Montserrat,sans-serif" font-size="9" fill="${C.muted}">enqueue</text>`;
+        s += `</svg>`;
+        return s;
+      }
+
+      // BST — build tree then draw
+      function svgBST(vals) {
+        // build BST
+        const nodes = {};
+        let root = null;
+        function bstInsert(v) {
+          if (root === null) {
+            root = v;
+            nodes[v] = { l: null, r: null };
+            return;
+          }
+          let cur = root;
+          while (true) {
+            if (v < cur) {
+              if (nodes[cur].l === null) {
+                nodes[cur].l = v;
+                nodes[v] = { l: null, r: null };
+                break;
+              } else cur = nodes[cur].l;
+            } else {
+              if (nodes[cur].r === null) {
+                nodes[cur].r = v;
+                nodes[v] = { l: null, r: null };
+                break;
+              } else cur = nodes[cur].r;
+            }
+          }
+        }
+        vals.forEach((v) => bstInsert(v));
+        // BFS for positions
+        const pos = {};
+        const queue = [[root, 0, 0, 1]]; // [val, depth, offset, span]
+        while (queue.length) {
+          const [v, d, off, span] = queue.shift();
+          pos[v] = [d, off];
+          if (nodes[v].l !== null)
+            queue.push([nodes[v].l, d + 1, off - span / 2, span / 2]);
+          if (nodes[v].r !== null)
+            queue.push([nodes[v].r, d + 1, off + span / 2, span / 2]);
+        }
+        const depths = Object.values(pos).map((p) => p[0]);
+        const maxD = Math.max(...depths);
+        const vw = 520,
+          vh = maxD * 90 + 100,
+          R = 22;
+        const toSvg = ([d, o]) => [vw / 2 + o * vw * 0.42, 48 + d * 85];
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:340px">`;
+        s += titleText(vw, "Binary Search Tree");
+        // edges
+        for (const [v, { l, r }] of Object.entries(nodes)) {
+          const [px, py] = toSvg(pos[v]);
+          if (l !== null) {
+            const [cx, cy] = toSvg(pos[l]);
+            s += `<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" stroke="${C.edgeLight}" stroke-width="2"/>`;
+          }
+          if (r !== null) {
+            const [cx, cy] = toSvg(pos[r]);
+            s += `<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" stroke="${C.edgeLight}" stroke-width="2"/>`;
+          }
+        }
+        // nodes
+        for (const [v] of Object.entries(nodes)) {
+          const [px, py] = toSvg(pos[v]);
+          s += nodeCircle(px, py, R, v, v == root);
+        }
+        s += `</svg>`;
+        return s;
+      }
+
+      // AVL — same BST layout + balance factor labels
+      function svgAVL(vals) {
+        const nodes = {};
+        let root = null;
+        function ins(v) {
+          if (root === null) {
+            root = v;
+            nodes[v] = { l: null, r: null };
+            return;
+          }
+          let cur = root;
+          while (true) {
+            if (v < cur) {
+              if (nodes[cur].l === null) {
+                nodes[cur].l = v;
+                nodes[v] = { l: null, r: null };
+                break;
+              } else cur = nodes[cur].l;
+            } else {
+              if (nodes[cur].r === null) {
+                nodes[cur].r = v;
+                nodes[v] = { l: null, r: null };
+                break;
+              } else cur = nodes[cur].r;
+            }
+          }
+        }
+        // Use sorted insert to get balanced-ish tree for visual
+        const sorted = [...vals].sort((a, b) => a - b);
+        function insertMid(arr) {
+          if (!arr.length) return;
+          const m = Math.floor(arr.length / 2);
+          ins(arr[m]);
+          insertMid(arr.slice(0, m));
+          insertMid(arr.slice(m + 1));
+        }
+        insertMid(sorted);
+        function height(v) {
+          if (v === null) return 0;
+          return (
+            1 +
+            Math.max(height(nodes[v]?.l ?? null), height(nodes[v]?.r ?? null))
+          );
+        }
+        function bf(v) {
+          if (v === null || !nodes[v]) return 0;
+          return height(nodes[v].l) - height(nodes[v].r);
+        }
+        const pos = {};
+        const q = [[root, 0, 0, 1]];
+        while (q.length) {
+          const [v, d, o, sp] = q.shift();
+          pos[v] = [d, o];
+          if (nodes[v].l !== null)
+            q.push([nodes[v].l, d + 1, o - sp / 2, sp / 2]);
+          if (nodes[v].r !== null)
+            q.push([nodes[v].r, d + 1, o + sp / 2, sp / 2]);
+        }
+        const maxD = Math.max(...Object.values(pos).map((p) => p[0]));
+        const vw = 520,
+          vh = maxD * 90 + 110,
+          R = 22;
+        const toSvg = ([d, o]) => [vw / 2 + o * vw * 0.42, 48 + d * 85];
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:360px">`;
+        s += titleText(vw, "AVL Tree (self-balancing BST)");
+        for (const [v, { l, r }] of Object.entries(nodes)) {
+          const [px, py] = toSvg(pos[v]);
+          if (l !== null) {
+            const [cx, cy] = toSvg(pos[l]);
+            s += `<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" stroke="${C.edgeLight}" stroke-width="2"/>`;
+          }
+          if (r !== null) {
+            const [cx, cy] = toSvg(pos[r]);
+            s += `<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" stroke="${C.edgeLight}" stroke-width="2"/>`;
+          }
+        }
+        for (const v of Object.keys(nodes)) {
+          const [px, py] = toSvg(pos[v]);
+          const b = bf(Number(v));
+          const fill =
+            b === 0 ? "#5C9E6A" : Math.abs(b) === 1 ? C.fill : "#C0392B";
+          s += `<circle cx="${px}" cy="${py}" r="${R}" fill="${fill}" stroke="${C.border}" stroke-width="2"/>`;
+          s += `<text x="${px}" y="${py}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="13" fill="${C.text}">${v}</text>`;
+          s += `<text x="${px + R + 4}" y="${py - R + 2}" font-family="Montserrat,sans-serif" font-size="9" fill="${fill}" font-weight="700">${b >= 0 ? "+" : ""}${b}</text>`;
+        }
+        // legend
+        s += `<circle cx="14" cy="${vh - 18}" r="7" fill="#5C9E6A" stroke="${C.border}" stroke-width="1.5"/>`;
+        s += `<text x="26" y="${vh - 14}" font-family="Montserrat,sans-serif" font-size="9" fill="${C.muted}">balanced (bf=0)</text>`;
+        s += `<circle cx="120" cy="${vh - 18}" r="7" fill="${C.fill}" stroke="${C.border}" stroke-width="1.5"/>`;
+        s += `<text x="132" y="${vh - 14}" font-family="Montserrat,sans-serif" font-size="9" fill="${C.muted}">|bf|=1</text>`;
+        s += `</svg>`;
+        return s;
+      }
+
+      // Graph
+      function svgGraph(vals) {
+        const n = vals.length,
+          R_outer = 130,
+          R = 22,
+          cx = 200,
+          cy = 200,
+          vw = 400,
+          vh = 420;
+        const angles = vals.map((_, i) => -Math.PI / 2 + (2 * Math.PI * i) / n);
+        const pos = vals.map((v, i) => [
+          cx + R_outer * Math.cos(angles[i]),
+          cy + R_outer * Math.sin(angles[i]),
+        ]);
+        // spanning edges + random extras
+        const edges = [];
+        const edgeSet = new Set();
+        const order = [...Array(n).keys()];
+        order.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < n - 1; i++) {
+          const a = order[i],
+            b = order[i + 1];
+          edges.push([a, b]);
+          edgeSet.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+        }
+        let attempts = 0;
+        while (edges.length < n + Math.floor(n / 2) && attempts < 200) {
+          const a = Math.floor(Math.random() * n),
+            b = Math.floor(Math.random() * n);
+          const key = `${Math.min(a, b)}-${Math.max(a, b)}`;
+          if (a !== b && !edgeSet.has(key)) {
+            edges.push([a, b]);
+            edgeSet.add(key);
+          }
+          attempts++;
+        }
+        let s = `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:360px">`;
+        s += titleText(vw, "Graph (Adjacency List)");
+        for (const [a, b] of edges) {
+          s += `<line x1="${pos[a][0]}" y1="${pos[a][1]}" x2="${pos[b][0]}" y2="${pos[b][1]}" stroke="${C.edgeLight}" stroke-width="2"/>`;
+        }
+        for (let i = 0; i < n; i++) {
+          s += nodeCircle(pos[i][0], pos[i][1], R, vals[i], i === 0);
+        }
+        // adj label center
+        s += `<text x="${cx}" y="${cy}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="${C.muted}" font-style="italic" opacity="0.7">adj[]</text>`;
+        s += `<text x="${cx}" y="${cy + 16}" dy="0.35em" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="9" fill="${C.muted}" opacity="0.6">${n} vertices · ${edges.length} edges</text>`;
+        s += `</svg>`;
+        return s;
+      }
+
+      const DRAW_FN = [
+        svgSLL,
+        svgDLL,
+        svgStack,
+        svgQueue,
+        svgBST,
+        svgAVL,
+        svgGraph,
+      ];
+      const NODE_COUNTS = [6, 5, 6, 5, 9, 8, 7];
+
+      // ─────────────────────────────────────────────────────────────────
+      // 4.  MAIN DETECT & VISUALIZE
+      // ─────────────────────────────────────────────────────────────────
+      async function detectAndVisualize() {
+        const code = document.querySelector(".code-textarea").value.trim();
+        if (!code) {
+          alert("Please paste some C/C++ code first.");
+          return;
+        }
+
+        const btn = document.querySelector(".detect-btn");
+        btn.textContent = "Detecting…";
+        btn.disabled = true;
+
+        try {
+          const resp = await fetch("/visualdsa/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          });
+
+          if (!resp.ok) throw new Error("Server error");
+          const data = await resp.json();
+
+          // Show image
+          const emptyState = document.getElementById("emptyState");
+          const vizWrapper = document.getElementById("vizSvgWrapper");
+          const vizContainer = document.getElementById("vizContainer");
+          const confidenceBar = document.getElementById("confidenceBar");
+          const confidenceFill = document.getElementById("confidenceFill");
+          const confidenceLabel = document.getElementById("confidenceLabel");
+          const confidenceValue = document.getElementById("confidenceValue");
+
+          emptyState.style.display = "none";
+          vizContainer.classList.add("has-content");
+          vizWrapper.style.display = "flex";
+          vizWrapper.innerHTML = `<img src="${data.image}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;" alt="${data.label}"/>`;
+
+          confidenceBar.classList.add("active");
+          confidenceLabel.textContent = `Predicted: ${data.labelShort} — ${data.label}`;
+          confidenceValue.textContent = data.confidence + "%";
+          confidenceFill.style.width = "0%";
+          setTimeout(() => {
+            confidenceFill.style.width = Math.min(data.confidence, 100) + "%";
+          }, 80);
+        } catch (err) {
+          alert(
+            "Something went wrong. Make sure Python is installed and the model is in place.",
+          );
+          console.error(err);
+        } finally {
+          btn.textContent = "Detect & Visualize";
+          btn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>
