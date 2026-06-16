@@ -162,7 +162,7 @@ app.post('/visualdsa/predict', (req, res) => {
     const modelPath  = path.join(__dirname, 'python', 'visualdsa_nb_model.pkl');
 
     // Pass code via stdin to avoid shell-escaping issues
-    const py = spawn('python', [scriptPath, '--model', modelPath], {
+    const py = spawn('/var/www/vircosa/python/venv/bin/python3', [scriptPath, '--model', modelPath], {
         cwd: path.join(__dirname, 'python')
     });
 
