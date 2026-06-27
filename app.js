@@ -4,7 +4,31 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 const { spawn } = require('child_process');
 const path = require('path');
+const multer = require('multer');
+const fs     = require('fs');
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = './uploads';
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        // unique name to avoid collisions under concurrent requests
+        cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}.csv`);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },          // 5 MB hard limit on server too
+    fileFilter: (req, file, cb) => {
+        if (!file.originalname.toLowerCase().endsWith('.csv')) {
+            return cb(new Error('Only CSV files are allowed'));
+        }
+        cb(null, true);
+    }
+});
 
 // Middleware
 app.use(express.static('.'));
@@ -186,6 +210,73 @@ app.post('/visualdsa/predict', (req, res) => {
             res.status(500).json({ error: 'Bad response from Python' });
         }
     });
+});
+
+app.get('/ml', (req, res) => {
+    res.render('ml');
+});
+
+app.post('/api/ml/analyze', upload.single('file'), (req, res) => {
+    const csvPath   = req.file?.path;
+    const target    = req.body?.target;
+    const task      = req.body?.task;
+
+    // Guard: missing fields
+    if (!csvPath || !target || !task) {
+        if (csvPath) fs.unlinkSync(csvPath);
+        return res.status(400).json({ error: 'Missing file, target column, or task type.' });
+    }
+
+    const scriptPath = path.join(__dirname, 'python', 'ml_engine.py');  
+
+    // Spawn Python — pass csv path, target column, task type as argv
+    const pyCmd = process.platform === 'win32' ? 'python' : 'python3';
+    const py = spawn(pyCmd, [scriptPath, csvPath, target, task]);
+
+    let stdout = '';
+    let stderr = '';
+
+    py.stdout.on('data', d => stdout += d.toString());
+    py.stderr.on('data', d => stderr += d.toString());
+
+    py.on('close', (code) => {
+        // Always delete the temp CSV regardless of outcome
+        try { fs.unlinkSync(csvPath); } catch (_) {}
+
+        if (code !== 0) {
+            console.error('[ml_engine] stderr:', stderr);
+            return res.status(500).json({ error: 'ML engine failed', detail: stderr });
+        }
+
+        try {
+            const result = JSON.parse(stdout);
+            if (result.error) {
+                return res.status(422).json({ error: result.error });
+            }
+            res.json(result);
+        } catch (e) {
+            console.error('[ml_engine] bad stdout:', stdout);
+            res.status(500).json({ error: 'Invalid response from ML engine' });
+        }
+    });
+
+    // Handle spawn errors (e.g. python3 not found)
+    py.on('error', (err) => {
+        try { fs.unlinkSync(csvPath); } catch (_) {}
+        console.error('[ml_engine] spawn error:', err);
+        res.status(500).json({ error: 'Could not start ML engine', detail: err.message });
+    });
+});
+
+// Multer error handler — catches file size / type rejections
+app.use((err, req, res, next) => {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File too large. Maximum size is 5MB.' });
+    }
+    if (err.message === 'Only CSV files are allowed') {
+        return res.status(400).json({ error: err.message });
+    }
+    next(err);
 });
 
 

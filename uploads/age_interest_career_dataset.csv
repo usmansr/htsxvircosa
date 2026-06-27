@@ -1,0 +1,101 @@
+gender,age,age_group,attention_span,creativity_score,logical_reasoning,verbal_intelligence,visual_intelligence,social_skills,motor_skills,Fairy Tale Interest,Motor Skills (Group Specific),Color Cards,Reading Books,Science Knowledge,Math Interest,Computer Games,Social Media Usage,Technology Interest,Career Goals,University Choices,Future Planning,primary_interest,secondary_interest,predicted_job
+Male,11,9-12,4,4,6,4,7,3,5,,,,4.0,4.0,7.0,,,,,,,Science,Drawing,Graphic Designer
+Female,8,5-8,7,1,7,10,10,5,2,1.0,3.0,5.0,,,,,,,,,,Animals,Drawing,Animal Caretaker
+Male,17,16-18,3,2,10,10,5,9,3,,,,,,,,,,9.0,9.0,1.0,Artificial Intelligence,Psychology,AI Engineer
+Female,15,13-15,6,1,7,3,3,2,9,,,,,,,2.0,7.0,3.0,,,,Coding,Sports,Software Developer
+Female,12,9-12,2,5,10,10,7,10,7,,,,5.0,3.0,6.0,,,,,,,Nature,Dance,Choreographer
+Male,17,16-18,10,5,3,1,2,8,7,,,,,,,,,,7.0,1.0,8.0,Web Design,Artificial Intelligence,AI Engineer
+Female,9,9-12,9,7,2,8,9,2,6,,,,2.0,2.0,2.0,,,,,,,Science,Sports,Professional Athlete
+Male,11,9-12,5,9,9,5,10,5,8,,,,7.0,7.0,1.0,,,,,,,Drawing,Science,Lab Technician
+Female,14,13-15,6,9,8,4,10,7,4,,,,,,,5.0,6.0,7.0,,,,Robotics,Sports,Professional Athlete
+Male,7,5-8,4,3,10,8,1,8,8,8.0,7.0,10.0,,,,,,,,,,Games,Music,Game Developer
+Male,11,9-12,10,3,7,7,6,1,4,,,,1.0,6.0,7.0,,,,,,,Drawing,Nature,Painter
+Female,15,13-15,7,3,9,2,7,6,8,,,,,,,6.0,8.0,8.0,,,,Robotics,Music,Mechatronics Engineer
+Female,15,13-15,9,4,4,1,8,1,9,,,,,,,8.0,5.0,8.0,,,,Coding,Music,Sound Engineer
+Male,12,9-12,7,8,4,4,10,2,3,,,,3.0,1.0,2.0,,,,,,,Dance,Sports,Physiotherapist
+Female,9,9-12,1,6,1,8,9,1,3,,,,3.0,10.0,7.0,,,,,,,Sports,Drawing,Physiotherapist
+Female,8,5-8,1,8,8,2,2,5,2,8.0,7.0,6.0,,,,,,,,,,Drawing,Music,Graphic Designer
+Female,12,9-12,9,1,3,3,10,10,10,,,,2.0,4.0,3.0,,,,,,,Science,Drawing,Lab Technician
+Male,12,9-12,9,8,7,1,2,9,3,,,,2.0,3.0,7.0,,,,,,,Dance,Science,Choreographer
+Male,7,5-8,4,4,2,1,5,6,3,8.0,6.0,2.0,,,,,,,,,,Animals,Music,Sound Engineer
+Male,10,9-12,9,1,2,3,5,1,5,,,,5.0,4.0,1.0,,,,,,,Nature,Sports,Botanist
+Male,9,9-12,3,8,7,5,6,1,5,,,,4.0,1.0,5.0,,,,,,,Science,Nature,Botanist
+Male,6,5-8,7,4,6,3,3,2,2,4.0,3.0,3.0,,,,,,,,,,Games,Fairy Tale,Child Educator
+Male,12,9-12,6,6,3,1,8,9,10,,,,2.0,9.0,8.0,,,,,,,Dance,Science,Scientist
+Male,16,16-18,8,8,9,1,1,3,6,,,,,,,,,,10.0,6.0,10.0,Theatre,Psychology,Guidance Counselor
+Male,18,16-18,9,4,10,8,6,1,5,,,,,,,,,,9.0,4.0,8.0,Theatre,Psychology,Stage Director
+Male,10,9-12,5,3,6,10,4,5,6,,,,7.0,5.0,9.0,,,,,,,Nature,Drawing,Environmental Engineer
+Female,6,5-8,1,9,10,2,1,7,1,8.0,4.0,4.0,,,,,,,,,,Fairy Tale,Drawing,Graphic Designer
+Male,16,16-18,3,3,10,3,7,6,5,,,,,,,,,,4.0,6.0,10.0,Artificial Intelligence,Law,AI Engineer
+Female,9,9-12,10,9,6,2,9,1,9,,,,5.0,8.0,5.0,,,,,,,Science,Sports,Scientist
+Female,5,5-8,8,2,1,3,4,5,10,9.0,6.0,8.0,,,,,,,,,,Fairy Tale,Games,Children's Book Author
+Female,16,16-18,6,2,4,7,4,5,2,,,,,,,,,,9.0,9.0,1.0,Psychology,Theatre,Psychologist
+Male,14,13-15,8,2,10,1,6,6,1,,,,,,,8.0,1.0,3.0,,,,Music,Sports,Sound Engineer
+Male,10,9-12,9,6,6,10,3,3,10,,,,5.0,8.0,8.0,,,,,,,Sports,Dance,Professional Athlete
+Male,17,16-18,4,3,6,8,6,5,9,,,,,,,,,,9.0,1.0,4.0,Artificial Intelligence,Law,Judge
+Male,16,16-18,1,9,5,10,7,7,10,,,,,,,,,,5.0,8.0,2.0,Web Design,Psychology,Guidance Counselor
+Female,13,13-15,1,4,1,10,10,5,9,,,,,,,9.0,4.0,7.0,,,,Robotics,Sports,Professional Athlete
+Male,5,5-8,10,1,8,10,10,5,9,10.0,6.0,1.0,,,,,,,,,,Drawing,Games,Graphic Designer
+Male,15,13-15,4,4,5,2,3,5,6,,,,,,,5.0,3.0,7.0,,,,Drama,Music,Sound Engineer
+Male,15,13-15,7,1,5,3,7,10,8,,,,,,,10.0,5.0,3.0,,,,Robotics,Sports,Mechatronics Engineer
+Male,14,13-15,2,5,7,9,3,10,1,,,,,,,4.0,8.0,2.0,,,,Music,Coding,Sound Engineer
+Male,16,16-18,3,4,4,7,2,3,10,,,,,,,,,,8.0,10.0,9.0,Artificial Intelligence,Web Design,UI/UX Expert
+Female,16,16-18,1,8,6,4,10,1,4,,,,,,,,,,6.0,7.0,2.0,Psychology,Theatre,Psychologist
+Male,18,16-18,5,8,4,10,4,5,1,,,,,,,,,,4.0,5.0,3.0,Psychology,Web Design,UI/UX Expert
+Female,18,16-18,1,7,3,5,8,9,8,,,,,,,,,,2.0,3.0,4.0,Artificial Intelligence,Law,Lawyer
+Male,18,16-18,8,3,7,2,9,1,1,,,,,,,,,,2.0,9.0,10.0,Artificial Intelligence,Theatre,Stage Director
+Female,7,5-8,1,1,8,8,7,3,3,10.0,8.0,8.0,,,,,,,,,,Music,Games,Game Developer
+Male,16,16-18,1,1,4,4,1,4,4,,,,,,,,,,5.0,1.0,7.0,Artificial Intelligence,Law,Judge
+Male,11,9-12,2,3,2,9,3,1,8,,,,8.0,10.0,5.0,,,,,,,Drawing,Sports,Professional Athlete
+Female,8,5-8,2,6,10,5,9,1,6,4.0,8.0,1.0,,,,,,,,,,Games,Animals,Child Educator
+Female,13,13-15,6,7,3,9,1,8,10,,,,,,,5.0,6.0,3.0,,,,Robotics,Drama,Robotics Specialist
+Female,7,5-8,7,6,1,4,9,2,7,1.0,4.0,3.0,,,,,,,,,,Games,Music,Musician
+Male,9,9-12,5,6,8,10,8,8,8,,,,9.0,8.0,8.0,,,,,,,Sports,Drawing,Professional Athlete
+Female,7,5-8,1,6,3,5,1,7,2,2.0,3.0,3.0,,,,,,,,,,Drawing,Games,Painter
+Male,11,9-12,1,3,10,9,6,10,10,,,,6.0,8.0,9.0,,,,,,,Science,Drawing,Scientist
+Male,9,9-12,3,6,7,8,5,10,8,,,,4.0,5.0,7.0,,,,,,,Science,Sports,Physiotherapist
+Female,13,13-15,2,8,10,3,6,2,3,,,,,,,2.0,2.0,5.0,,,,Sports,Robotics,Physiotherapist
+Female,11,9-12,5,2,5,1,10,6,7,,,,10.0,7.0,4.0,,,,,,,Nature,Science,Environmental Engineer
+Male,6,5-8,10,5,10,3,5,6,3,10.0,5.0,1.0,,,,,,,,,,Music,Games,Child Educator
+Male,8,5-8,6,1,5,4,6,3,7,2.0,4.0,3.0,,,,,,,,,,Games,Music,Child Educator
+Female,13,13-15,7,1,7,2,5,2,2,,,,,,,8.0,8.0,5.0,,,,Robotics,Music,Mechatronics Engineer
+Female,16,16-18,4,5,9,1,5,1,10,,,,,,,,,,4.0,2.0,10.0,Theatre,Web Design,Actor
+Female,18,16-18,7,3,5,7,4,6,6,,,,,,,,,,5.0,6.0,9.0,Web Design,Law,UI/UX Expert
+Male,6,5-8,8,4,1,8,3,5,3,1.0,6.0,1.0,,,,,,,,,,Animals,Fairy Tale,Veterinarian
+Male,14,13-15,1,3,10,7,3,9,3,,,,,,,6.0,6.0,2.0,,,,Music,Robotics,Musician
+Male,13,13-15,6,1,10,5,4,1,9,,,,,,,3.0,9.0,1.0,,,,Sports,Robotics,Professional Athlete
+Male,14,13-15,8,1,1,1,9,7,7,,,,,,,7.0,1.0,3.0,,,,Coding,Drama,Theatre Director
+Male,9,9-12,5,5,2,7,2,5,5,,,,6.0,10.0,9.0,,,,,,,Nature,Drawing,Environmental Engineer
+Male,6,5-8,4,6,6,7,9,5,10,8.0,8.0,1.0,,,,,,,,,,Games,Fairy Tale,Child Educator
+Female,8,5-8,2,3,9,9,1,2,7,6.0,2.0,8.0,,,,,,,,,,Animals,Drawing,Veterinarian
+Male,16,16-18,6,9,8,3,1,3,9,,,,,,,,,,8.0,7.0,3.0,Artificial Intelligence,Law,AI Engineer
+Male,16,16-18,6,5,5,9,5,7,1,,,,,,,,,,2.0,6.0,10.0,Artificial Intelligence,Web Design,UI/UX Expert
+Male,11,9-12,1,8,1,1,6,6,7,,,,6.0,10.0,6.0,,,,,,,Nature,Sports,Physiotherapist
+Female,16,16-18,9,1,7,1,6,2,6,,,,,,,,,,6.0,5.0,7.0,Law,Web Design,Web Designer
+Male,17,16-18,6,5,5,4,3,6,10,,,,,,,,,,4.0,7.0,9.0,Web Design,Law,UI/UX Expert
+Male,12,9-12,3,3,6,9,7,2,9,,,,5.0,10.0,6.0,,,,,,,Sports,Drawing,Painter
+Female,7,5-8,4,1,7,6,9,2,1,8.0,8.0,2.0,,,,,,,,,,Fairy Tale,Animals,Child Psychologist
+Male,18,16-18,4,4,3,3,10,2,4,,,,,,,,,,2.0,9.0,8.0,Theatre,Web Design,Web Designer
+Male,5,5-8,3,5,10,1,8,3,9,2.0,8.0,7.0,,,,,,,,,,Fairy Tale,Games,Child Educator
+Male,8,5-8,10,7,3,4,6,2,4,3.0,10.0,7.0,,,,,,,,,,Fairy Tale,Animals,Child Psychologist
+Male,6,5-8,3,1,5,9,8,4,10,3.0,1.0,2.0,,,,,,,,,,Drawing,Games,Game Developer
+Male,12,9-12,3,3,6,3,5,9,3,,,,8.0,8.0,10.0,,,,,,,Nature,Drawing,Graphic Designer
+Female,8,5-8,4,2,9,9,8,6,9,8.0,9.0,8.0,,,,,,,,,,Animals,Games,Game Developer
+Female,6,5-8,7,9,5,7,10,1,2,6.0,6.0,1.0,,,,,,,,,,Drawing,Animals,Painter
+Female,18,16-18,4,10,1,4,4,8,4,,,,,,,,,,7.0,2.0,4.0,Psychology,Theatre,Psychologist
+Male,10,9-12,9,6,4,3,10,7,6,,,,7.0,4.0,2.0,,,,,,,Sports,Nature,Botanist
+Male,10,9-12,1,10,5,10,8,10,2,,,,10.0,7.0,2.0,,,,,,,Nature,Dance,Environmental Engineer
+Male,14,13-15,8,3,10,5,10,3,8,,,,,,,2.0,9.0,1.0,,,,Coding,Music,Software Developer
+Female,8,5-8,7,8,10,5,2,1,8,5.0,7.0,7.0,,,,,,,,,,Drawing,Fairy Tale,Graphic Designer
+Male,10,9-12,2,8,5,3,5,5,1,,,,5.0,10.0,3.0,,,,,,,Sports,Science,Scientist
+Male,17,16-18,8,2,7,9,9,4,3,,,,,,,,,,1.0,10.0,9.0,Theatre,Artificial Intelligence,Stage Director
+Female,6,5-8,1,6,4,4,4,10,10,3.0,5.0,9.0,,,,,,,,,,Games,Drawing,Painter
+Male,14,13-15,9,7,1,5,6,8,9,,,,,,,1.0,7.0,7.0,,,,Coding,Sports,Software Developer
+Female,16,16-18,9,2,5,4,1,1,5,,,,,,,,,,10.0,2.0,6.0,Web Design,Psychology,UI/UX Expert
+Female,6,5-8,2,10,7,5,9,10,6,9.0,6.0,3.0,,,,,,,,,,Fairy Tale,Drawing,Painter
+Female,14,13-15,7,2,10,7,1,1,4,,,,,,,10.0,7.0,7.0,,,,Music,Coding,Software Developer
+Male,18,16-18,10,10,10,9,5,4,10,,,,,,,,,,2.0,10.0,4.0,Theatre,Artificial Intelligence,Stage Director
+Male,8,5-8,3,1,6,7,4,8,2,2.0,1.0,2.0,,,,,,,,,,Animals,Games,Child Educator
+Male,18,16-18,7,8,5,5,3,5,8,,,,,,,,,,10.0,7.0,2.0,Artificial Intelligence,Psychology,Psychologist
+Male,12,9-12,10,1,4,10,6,2,6,,,,5.0,7.0,8.0,,,,,,,Nature,Dance,Environmental Engineer
+Male,18,16-18,9,9,2,10,2,6,5,,,,,,,,,,8.0,7.0,5.0,Artificial Intelligence,Theatre,Actor
